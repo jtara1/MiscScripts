@@ -8,7 +8,7 @@ import click
 @click.argument('file_name', default='output.txt', type=click.Path())
 @click.option('--cat', default=False, help='concatenate each line in file_name',
               is_flag=True)
-def main(file_name, cat):
+def bytes_to_image(file_name, cat):
     # read the string and evaluate 
     with open(file_name, 'r') as f:
         if not cat:
@@ -25,4 +25,4 @@ def main(file_name, cat):
 
 
 if __name__ == "__main__":
-    main()
+    bytes_to_image()
