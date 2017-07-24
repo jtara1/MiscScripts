@@ -4,9 +4,8 @@ import os
 
 
 @click.command()
-@click.argument('folder', type=click.Path(),
-                help='Directory of the folders containing the images.')
-def main(folder):
+@click.argument('folder', type=click.Path())
+def zip_folders(folder):
     folder = os.path.abspath(folder)
     # iterate over all the folders & files
     for f in os.listdir(folder):
@@ -19,4 +18,4 @@ def main(folder):
 
 
 if __name__ == "__main__":
-    main()
+    zip_folders()
