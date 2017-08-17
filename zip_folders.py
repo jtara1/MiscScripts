@@ -10,6 +10,9 @@ def zip_folders(folder):
     # iterate over all the folders & files
     for f in os.listdir(folder):
         current_folder = os.path.join(folder, f)
+        # this item is a file, not a folder
+        if not os.path.isdir(current_folder):
+            continue
         # open a zip file (to write to)
         with zipfile.ZipFile(current_folder + ".zip", 'w') as z_file:
             # write each file or folder in the current_folder
