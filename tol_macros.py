@@ -2,9 +2,10 @@ import keyboard
 import time
 import mouse
 import threading
+import click
 
 
-class Action:
+class Action(threading.Thread):
     def __init__(self, hotkey):
         """
         Interface for an action
@@ -14,21 +15,22 @@ class Action:
         self.terminate = False
         self.delay_between_picksups = 0.5
 
-        self.thread = threading.Thread(target=self.start)
-        self.thread.start()
+        self.thread = threading.Thread(target=self._run_repeatedly)
+        self.start()
+        self._stop_event = threading.Event()
+        
         self.create_hotkey()
 		
     def create_hotkey(self):
         keyboard.add_hotkey(
             hotkey=self.hotkey,
             callback=self.toggle_enabled)
-                            
-    def start(self):
-        self._run_repeatedly()
 
-    def _run(self):
-        """Does the action once"""
-        do_action()
+    def start(self):
+        """Start the thread which should start the loop which
+        should be ready to repeatedly do some action
+        """
+        self.thread.start()
 
     def _run_repeatedly(self):
         """Does the action over and over again
@@ -47,6 +49,12 @@ class Action:
     def toggle_enabled(self):
         self.enabled = not self.enabled
         print(__class__.__name__ + str(self.enabled))
+
+    def stop(self):
+        """Stop the thread. We're no longer doing any action
+        with any hotkeys created
+        """
+        self._stop_event.set()
         
 
 class Pickup(Action):
@@ -84,7 +92,6 @@ class Walker(Action):
         super().__init__(hotkey=hotkey)
 
     def do_action(self):
-        print('do_action')
         if self.enabled:
             keyboard.press('w')
         else:
@@ -99,11 +106,38 @@ class Walker(Action):
         self.do_action()
     
 
-if __name__ == "__main__":
-    # start the program
-    Pickup()
-    Digger()
-    Walker()
+@click.command()
+@click.option('-p', '--pickup', is_flag=True, default=True,
+              help='Disables pickup macro')
+@click.option('-d', '--digger', is_flag=True, default=True,
+              help='Disables digger macro')
+@click.option('-w', '--walker', is_flag=True, default=True,
+              help='Disables walker macro')
+def main(pickup, digger, walker):
+
+    def stop_all():
+        for macro in macros:
+            macro.stop()
+    
+    macros = []
+    if pickup:
+        macros.append(Pickup())
+    if digger:
+        # if digger enabled, it's best if pickup is also enabled
+        macros.append(Digger())
+    if walker:
+        macros.append(Walker())
+
     # block until program exit (KeyBoardInterrupt) ctrl+c
     while True:
-        time.sleep(10)
+        try:
+            time.sleep(1)
+        except KeyboardInterrupt:
+            stop_all()
+            exit(0)
+
+
+if __name__ == "__main__":
+    # start the program
+    main()
+
