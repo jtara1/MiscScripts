@@ -1,4 +1,5 @@
 click
 keyboard
+mouse
 PIL
 bs4

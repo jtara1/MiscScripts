@@ -6,7 +6,7 @@ import os
 @click.command()
 @click.argument("file_path", type=click.Path())
 @click.argument("extension", type=click.STRING)
-@click.option("-r", is_flag=True, default=False)
+@click.option("-r", is_flag=True, default=False, help='Enable op recursively')
 def main(file_path, extension, r):
     all_files = glob(os.path.join(file_path, "**"), recursive=r)
 
