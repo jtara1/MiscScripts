@@ -133,7 +133,7 @@ def resize_annotation(anno_path):
         # f.seek(0)
         text += f.read()
 
-        soup = BeautifulSoup(text, 'lxml')
+        soup = BeautifulSoup(text, 'html.parser')
         anno_name = get_file_name(anno_path)
 
         global IMG_RESIZED_SCALE
