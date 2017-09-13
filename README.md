@@ -1,5 +1,6 @@
 # MiscScripts
-Various scripts I've found to be useful
+Various scripts I've found to be useful. I'm consolidating some of my other
+github repos here and adding general scripting util I've created.
 
 
 
@@ -19,10 +20,22 @@ lines and files were used in some programming project.
 
 `file_to_bytes.py` saves the bytes of a file to a text file.
 
+`images_to_pdf.py` takes a folder containing images and puts them all in a
+single pdf sorted by the number in the filename of each image.
+
+`rename_file_extensions.py` replaces the file extensions of each file in a given
+folder with desired replacement.
+
+`replace_text_in_files.py` replaces each search_text found in each file in the
+desired folder with replace_text (params passed through cli).
+
 `resize_images.py` resizes each image in a folder to a given width or height
 while maintaining the original aspect ratio (makes backup copy by default).
 Eventually this is intended to update annotations which contain
 info on bounding boxes for the image additionally.
+
+`screenshot_book_pages.py` takes a screenshot then press right arrow key to
+go to next page. Variables are hard coded atm.
 
 `tol_macros.py` macros made for a particular game, some of which can be used in
 other games or have base class, Action, extended for use elsewhere. Includes:

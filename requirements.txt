@@ -2,4 +2,8 @@ click
 keyboard
 mouse
 PIL
+Pillow
 bs4
+pyautogui
+wx
+fpdf
