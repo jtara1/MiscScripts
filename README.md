@@ -9,6 +9,9 @@ from imgur in a given directory.
 `GetMediaFiles/get_media_files.py` returns information about media files
 (images, audio, video) in a given directory (like a wrapper for pymediainfo).
 
+`MediaToVideo/m2v.py` takes all images from a folder and renders them into
+ a video.
+
 `add_file_extensions.py` concatenates the user-given extension to each file
 in the given folder. Useful for when there's lots of media files made on linux
 w/o file name extension which need file name extension in windows.

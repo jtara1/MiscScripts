@@ -9,3 +9,4 @@ wx          # screenshot_book_pages.py
 fpdf        # screenshot_book_pages.py
 pymediainfo # GetMediaFiles and DeleteImgurDNE
 psutil      # gooey or wxPython
+moviepy     # MediaToVideo/m2v.py
