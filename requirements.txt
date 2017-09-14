@@ -1,9 +1,11 @@
-click
-keyboard
-mouse
-PIL
-Pillow
-bs4
-pyautogui
-wx
-fpdf
+click       # almost everything
+keyboard    # tol_macros.py
+mouse       # tol_macros.py
+PIL         # resize_images.py
+bs4         # resize_images.py (for XML annotation parser)
+Pillow      # screenshot_book_pages.py
+pyautogui   # screenshot_book_pages.py
+wx          # screenshot_book_pages.py
+fpdf        # screenshot_book_pages.py
+pymediainfo # GetMediaFiles and DeleteImgurDNE
+psutil      # gooey or wxPython
