@@ -3,6 +3,11 @@ Various scripts I've found to be useful. I'm consolidating some of my other
 github repos here and adding general scripting util I've created.
 
 
+`DeleteImgurDNE/delete_imgur_dne.py` deletes all 'does not exist' images 
+from imgur in a given directory.
+
+`GetMediaFiles/get_media_files.py` returns information about media files
+(images, audio, video) in a given directory (like a wrapper for pymediainfo).
 
 `add_file_extensions.py` concatenates the user-given extension to each file
 in the given folder. Useful for when there's lots of media files made on linux
@@ -51,6 +56,17 @@ readable by apps such as ComicRack.
 
 Tested with *Python 3.5+*
 
+#### Dependencies
+
+- `DeleteImgurDNE/` and `GetMediaFiles/` require 
+[MediaInfo installer](https://mediaarea.net/en/MediaInfo/Download)
+- other scripts may use **tkinter**, **wx**, or **Qt** GUI modules which 
+may require external downloads of their own
+
+#### Modules
+
+- [check requirements.txt](https://github.com/jtara1/MiscScripts/blob/master/requirements.txt)
+
 ### Install
 
 ```
@@ -60,22 +76,20 @@ pip install -r requirements.txt
 
 ### Usage
 
-Depends on which script you're using. Most (or all?) of the scripts are using
-click module for cli so you could just run it and check the help and cli
-info in console
+Depends on which script you're using. Most of the scripts are using
+click module for cli so you could just run it with `--help` and check the 
+help and cli info in console
 
 e.g.:
-`python add_file_extensions.py`
+`python add_file_extensions.py --help`
 
 returns
 ```
-C:\Users\James\Documents\_Github-Projects\MiscScripts>python add_file_extensions.py
+j@j-pc ~/_Github-Projects/MiscScripts $ python3.5 add_file_extensions.py --help
 Usage: add_file_extensions.py [OPTIONS] FILE_PATH EXTENSION
 
-Error: Missing argument "file_path".
+Options:
+  -r      Enable op recursively
+  --help  Show this message and exit.
+
 ```
-
-
-#### Modules
-
-- [check requirements.txt](https://github.com/jtara1/MiscScripts/blob/master/requirements.txt)
