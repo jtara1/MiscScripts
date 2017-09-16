@@ -20,7 +20,7 @@ class GetMediaFiles:
 
     def get_all(self, path=None, recursive=False,
                 track_types=None, sort='st_ctime',
-                start_i=0, limit_i=-1, remove_audio=True):
+                start_i=0, limit_i=-1, remove_audio=False):
         """
         Utilize pymediainfo to get media tracks, size, duration, & format
         Returns a list of lists with file info (see readme.md for more details)
@@ -49,6 +49,7 @@ class GetMediaFiles:
         # reorganize so we can append data with each file
         all_files = list([f] for f in all_files)
 
+        # e.g.: '(Audio|Video|Image)'
         media_types = '|'.join(track_types)
         media_type_regex = re.compile('(' + media_types + ')')
 
@@ -147,16 +148,22 @@ class GetMediaFiles:
 if __name__ == "__main__":
     # # tests
     import time
+    import click
     init_t = time.time()
-    # path1 = os.path.join('/home/j/Pictures')
-    # path2 = os.path.join(os.getcwd(), 'test-imgs2')
-    # path3 = '/home/j/Documents/_Github-Projects/MediaToVideo/temp-imgs'
-    path4 = '/home/j/Pictures/James\'s Wallpapers/'
 
-    media = GetMediaFiles(path=path4, track_types=['Image', 'Video'])
-    files = media.get_all(recursive=True, sort='st_ctime', start_i=0, limit_i=-1)
-    print('----------------------------')
-    # media.print_files(files)
-    print('%s files found.' % len(files))
-    print('%i seconds passed' % int(time.time() - init_t))
-    # stats = media.get_stats(files)
+    @click.command()
+    @click.argument('folder')
+    @click.option('-r', '--recursive', default=False)
+    @click.option('-t', '--track-types', default=['Image', 'Vide', 'Audio'])
+    def main(folder, recursive, track_types):
+        media = GetMediaFiles(path=folder, track_types=track_types)
+        files = media.get_all(recursive=recursive, sort='st_ctime', start_i=0, limit_i=-1)
+        print('----------------------------')
+        # media.print_files(files)
+        print('%s files found.' % len(files))
+        print('%i seconds passed' % int(time.time() - init_t))
+        media.print_files(files)
+
+        # stats = media.get_stats(files)
+
+    main()
