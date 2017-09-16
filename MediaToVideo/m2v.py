@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import moviepy
 from moviepy.editor import *
 import wavefile
 import click
@@ -78,6 +79,7 @@ class MediaToVideo:
         """
         clips = self._get_clips()
         self._composite_clips(clips, audio_clip=self._get_audio_clips()[0])
+        # self._concatenate_clips(clips, audio_clip=self._get_audio_clips()[0])
 
         ### secondary functions for writing final vid file ####
         # self._write_clips(clips)
@@ -85,12 +87,9 @@ class MediaToVideo:
 
     def _get_clips(self):
         """ Get list of Clip objects of videos & images """
-        int_t = self.interval_duration
-        img_clips = self._get_image_clips()
-        clips = img_clips + self._get_video_clips()
-        return clips
+        return self._get_image_clips() + self._get_video_clips()
 
-    def _get_image_clips(self, start_t=0):
+    def _get_image_clips(self):
         """ Creates moviepy clips for images & returns a list of them """
         transition_t = 0.3
         clips = []
@@ -101,7 +100,7 @@ class MediaToVideo:
                     .set_start(self.vid_time)
                     .set_pos('center')
                     .crossfadein(transition_t)
-                    .set_duration(self.interval_duration)
+                    # .set_duration(self.interval_duration)
                     .resize(self._fit_img(
                         clip_data[1]['Image']['size'][0],
                         clip_data[1]['Image']['size'][1]))
@@ -109,7 +108,7 @@ class MediaToVideo:
                 self.vid_time += self.interval_duration
         return clips
 
-    def _get_video_clips(self, start_t=0):
+    def _get_video_clips(self):
         """ Creates moviepy clips for video & returns a list of them """
         transition_t = 0.3
         clips = []
@@ -117,7 +116,7 @@ class MediaToVideo:
             if self.vid_time < self.max_duration:
                 src_clip_duration = float(clip_data[1]['Video']['duration'])/1000
                 clips.append(
-                    VideoFileClip(clip_data[0], audio=True)
+                    VideoFileClip(clip_data[0], audio=False)
                     .set_start(self.vid_time)
                     .set_pos('center')
                     .crossfadein(transition_t)
@@ -140,29 +139,39 @@ class MediaToVideo:
         clips = []
         # for i, clip_data in enumerate(self.sound_files):
         # signal = wav_to_floats(clip_data[0])
-        signal = wav_to_floats('/home/j/Temp/m2v_pics/song.wav')
+        # signal = wav_to_floats('/home/j/Temp/m2v_pics/song.wav')
+        # clips.append(
+        #     AudioClip(make_frame=lambda t: signal[t], duration=self.vid_time)
+        #     .set_start(0)
+        #     # .set_duration(self.vid_time)
+        # )
+        path = "/home/j/Temp/m2v_pics/song3.mp3"
+        ffmpeg_data = moviepy.video.io.ffmpeg_reader.ffmpeg_parse_infos(path, print_infos=True)
         clips.append(
-            AudioClip(make_frame=lambda t: signal[t], duration=self.vid_time)
+            AudioFileClip(path)
             .set_start(0)
-            # .set_duration(self.vid_time)
-        )
+            .set_duration(self.vid_time)
+            .volumex(1.0))
         return clips
 
     def _composite_clips(self, clips, ofname='output', audio_clip=None):
-        """ Renders and saves video made of clips from self.get_clips(...) """
+        """ Renders and saves video made of clips from self._get_clips(...) """
+        video = CompositeVideoClip(clips, size=(self.owidth, self.oheight))
+        video.set_audio(audio_clip)
+
         opath = os.path.join(self.out_path, str(int(time.time())) + '.mp4')
-        width, height = self.owidth, self.oheight
-        video = CompositeVideoClip(clips, size=(width, height))
-        video.set_audio(audioclip=audio_clip)
-        video.write_videofile(opath, fps=30)
+        # pcm_s16le
+        # libvorbis
+        video.write_videofile(opath, fps=30,)
 
     def _concatenate_clips(self, clips, ofname='output', audio_clip=None):
         """ Takes list of VideoFileClip objects & concatenates them to make 
-        one video 
+        one video. 
         """
+        video = concatenate_videoclips(clips, transition=None, bg_color=None)
+        video.set_audio(audio_clip)
+
         opath = os.path.join(self.out_path, str(int(time.time())) + '.mp4')
-        width, height = self.owidth, self.oheight
-        video = concatenate(clips, transition=None, bg_color=None)
         video.write_videofile(opath, fps=30)
 
     def _write_clips(self, clips, ofnames=[]):
@@ -176,6 +185,7 @@ class MediaToVideo:
         """ Get width & height to scale image to to fit self.owidth & 
         self.oheight 
         """
+        w2, h2, = None, None
         # assumes self.owidth > self.oheight (most aspect ratios work that way)
         if w > h:
             w2 = self.owidth
