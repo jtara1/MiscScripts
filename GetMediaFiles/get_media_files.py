@@ -19,7 +19,7 @@ class GetMediaFiles:
             else ['Image', 'Video', 'Audio']
 
     def get_all(self, path=None, recursive=False,
-                track_types=None, sort='st_ctime',
+                track_types=None, sort='st_ctime', sort_reverse=False,
                 start_i=0, limit_i=-1, remove_audio=False):
         """
         Utilize pymediainfo to get media tracks, size, duration, & format
@@ -32,6 +32,7 @@ class GetMediaFiles:
                 'General'
             sort: os.stat(path) returns a tuple, access value 
                 from that tuple with sort param
+            sort_reverse: Reverse after sorting
             start_i: start index to begin getting files at
             limit_i: end index to stop getting files before
             remove_audio: removes files that are audio only if True (redundant)
@@ -97,7 +98,7 @@ class GetMediaFiles:
 
         # attach stats (mutates files) then sort files
         self.attach_stats(all_files, stat_type=sort)
-        all_files = sorted(all_files, key=itemgetter(-1))
+        all_files = sorted(all_files, key=itemgetter(-1), reverse=sort_reverse)
 
         return all_files
 

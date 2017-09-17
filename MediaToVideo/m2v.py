@@ -1,9 +1,7 @@
 import os
 import sys
 import time
-import moviepy
 from moviepy.editor import *
-import wavefile
 import click
 
 # lazy way to import submodule whose path is in ../GetMediaFiles relative to
@@ -17,21 +15,28 @@ from GetMediaFiles.get_media_files import GetMediaFiles
 
 class MediaToVideo:
     def __init__(self, src_path=os.path.basename(os.path.abspath(__file__)),
-                 file_types=None, sort='st_ctime',
-                 interval_duration=4, max_duration=300):
+                 sort='st_ctime', sort_reverse=False, interval_duration=8,
+                 audio_index=0, audio_folder=None):
         """
         Description:
             Given a directory (path), get media files in path, convert &
             concatenate into clips where the duration of each is 
-            interval_duration, until max_duration is reached, 
-            but not exceeded with optional audio.
+            interval_duration or the duration of the src vid, 
+            until max_duration is reached.
         
         Parameters:
             src_path: path containing sources of media files to use in video
             sort: value from os.stat(...) func, viable values: 
                 https://docs.python.org/3/library/os.html#os.stat_result
+            sort_reverse: Reverse after sorting; Default sorts from least to
+                greatest (oldest to newest)
             interval_duration: duration of each image shown in the video
-            max_duration: total length (in seconds) of the video
+            # max_duration: total length (in seconds) of the video
+            audio_index: The index used to choose the audio file from the 
+                sorted list of audio_files in the src_path for the final 
+                render
+            audio_folder: only search for songs to use in the video in this
+                folder, otherwise, search for songs in src_path
         """
         # source media to be used in final video is in this path
         self.src_path = os.path.abspath(src_path)
@@ -43,7 +48,8 @@ class MediaToVideo:
 
         # duration of each media file in video
         self.interval_duration = interval_duration
-        self.max_duration = max_duration  # maximum duration allowed
+        # maximum duration allowed - determined by length of audio file
+        self.max_duration = 2
 
         # should be file path to audio file or None
         # self.audio_files = audio_files
@@ -55,12 +61,17 @@ class MediaToVideo:
         self.src_files = GetMediaFiles(self.src_path)
         self.image_files = self.src_files.get_all(
             sort=sort,
+            sort_reverse=sort_reverse,
             track_types=['Image'])
         self.video_files = self.src_files.get_all(
             sort=sort,
+            sort_reverse=sort_reverse,
             track_types=['Video'])
         self.sound_files = self.src_files.get_all(
+            path=os.path.abspath(audio_folder)
+            if audio_folder else self.src_path,
             sort=sort,
+            sort_reverse=sort_reverse,
             track_types=['Audio']
         )
         print('songs found: ')
@@ -72,14 +83,20 @@ class MediaToVideo:
         self.src_files.print_files(self.media_files)  # debug
 
         self.vid_time = 0  # time a clip is placed in the timeline of final vid
+        self.audio_index = audio_index
 
     def render(self):
         """ The user using the API should call this method to render the images
-        from the provided path as a video.
+        and videos from the provided path as a video based on the length of
+        the audio file used in self._get_audio_file().
         """
-        clips = self._get_clips()
-        self._composite_clips(clips, audio_clip=self._get_audio_clips()[0])
-        # self._concatenate_clips(clips, audio_clip=self._get_audio_clips()[0])
+        # find the audio clip we're using to determine how long this rendered
+        # video will be
+        audio_clip = self._get_audio_clip()
+        self.max_duration = audio_clip.duration
+
+        # render the thing with all the media
+        self._composite_clips(self._get_clips(), audio_clip=audio_clip)
 
         ### secondary functions for writing final vid file ####
         # self._write_clips(clips)
@@ -114,14 +131,15 @@ class MediaToVideo:
         clips = []
         for i, clip_data in enumerate(self.video_files):
             if self.vid_time < self.max_duration:
-                src_clip_duration = float(clip_data[1]['Video']['duration'])/1000
+                src_clip_duration = float(
+                    clip_data[1]['Video']['duration']) / 1000
                 clips.append(
-                    VideoFileClip(clip_data[0], audio=False)
+                    VideoFileClip(clip_data[0], audio=True)
                     .set_start(self.vid_time)
                     .set_pos('center')
                     .crossfadein(transition_t)
                     .set_duration(src_clip_duration)
-                    .volumex(0.5)
+                    .volumex(1)
                     .set_fps(30)
                     .resize(self._fit_img(
                         clip_data[1]['Video']['size'][0],
@@ -130,34 +148,22 @@ class MediaToVideo:
                 self.vid_time += src_clip_duration
         return clips
 
-    def _get_audio_clips(self):
-        # returns the contents of the wav file as a double precision float array
-        def wav_to_floats(filename='file1.wav'):
-            w = wavefile.load(filename)
-            return w[1][0]
-
-        clips = []
-        # for i, clip_data in enumerate(self.sound_files):
-        # signal = wav_to_floats(clip_data[0])
-        # signal = wav_to_floats('/home/j/Temp/m2v_pics/song.wav')
-        # clips.append(
-        #     AudioClip(make_frame=lambda t: signal[t], duration=self.vid_time)
-        #     .set_start(0)
-        #     # .set_duration(self.vid_time)
-        # )
-        path = "/home/j/Temp/m2v_pics/song3.mp3"
-        ffmpeg_data = moviepy.video.io.ffmpeg_reader.ffmpeg_parse_infos(path, print_infos=True)
-        clips.append(
-            AudioFileClip(path)
-            .set_start(0)
-            .set_duration(self.vid_time)
-            .volumex(1.0))
-        return clips
+    def _get_audio_clip(self):
+        """ Make audio clip from one of the files found in the main directory
+        given
+        """
+        return AudioFileClip(self.sound_files[self.audio_index][0])\
+            .set_start(0)\
+            .volumex(1)
 
     def _composite_clips(self, clips, ofname='output', audio_clip=None):
         """ Renders and saves video made of clips from self._get_clips(...) """
         video = CompositeVideoClip(clips, size=(self.owidth, self.oheight))
-        video.set_audio(audio_clip)
+        # all_audio = concatenate_audioclips([video.audio, audio_clip])
+        if video.audio is not None:
+            audio_clip = CompositeAudioClip([video.audio, audio_clip])
+
+        video.audio = audio_clip
 
         opath = os.path.join(self.out_path, str(int(time.time())) + '.mp4')
         # pcm_s16le
@@ -198,12 +204,29 @@ class MediaToVideo:
         return w2, h2
 
 
-@click.command()
-@click.argument('folder')
-def main(folder):
-    m2v = MediaToVideo(folder)
-    m2v.render()
-
-
 if __name__ == '__main__':
+    """TODO: using auto class args -> cli program would make life easier"""
+    @click.command()
+    @click.argument('folder')
+    @click.option('-ai', '--audio-index', default=0, nargs=1,
+                  help='Index of the audio file to be used in the video')
+    @click.option('-af', '--audio-folder', default=None, nargs=1,
+                  help='The folder containing audio files which can be used'
+                       'in the video')
+    @click.option('-i', '--interval', default=8, nargs=1,
+                  help='Length in sec of each image shown in the video')
+    @click.option('-s', '--sort', default='st_ctime', nargs=1,
+                  help='Media files in src_folder get sorted according to this'
+                       'value. See '
+                       'https://docs.python.org/3/library/os.html'
+                       '#os.stat_result')
+    @click.option('-sr', '--sort-reverse', default=False, is_flag=True,
+                  help='Reverse after sorting; Default sorts from least to '
+                       'greatest (oldest to newest)')
+    def main(folder, audio_index, interval, sort, sort_reverse, audio_folder):
+        m2v = MediaToVideo(folder, sort=sort, sort_reverse=sort_reverse,
+                           interval_duration=interval, audio_index=audio_index,
+                           audio_folder=audio_folder)
+        m2v.render()
+
     main()
