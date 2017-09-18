@@ -205,7 +205,6 @@ class MediaToVideo:
 
 
 if __name__ == '__main__':
-    """TODO: using auto class args -> cli program would make life easier"""
     @click.command()
     @click.argument('folder')
     @click.option('-ai', '--audio-index', default=0, nargs=1,
