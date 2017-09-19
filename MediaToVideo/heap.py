@@ -15,17 +15,44 @@ class Heap:
         self.file_path = file_path
 
     def push(self, datum):
+        """Add datum to the heap"""
         heappush(self.heap, datum)
 
     def pop(self):
-        return heappop(self.heap)
+        """Get top (smallest) value removing it in the process"""
+        try:
+            return heappop(self.heap)
+        except IndexError:
+            return None  # heap was empty
+
+    def peek(self):
+        """Get top (smallest) value without removing it"""
+        try:
+            return self.heap[0]
+        except (IndexError, TypeError):
+            return None  # heap was empty
 
     def serialize(self):
+        """Save heap to a file"""
         Serialization.serialize_as_binary(data=self.heap,
                                           data_file=self.file_path)
 
     def deserialize(self):
-        self.heap = Serialization.deserialize_from_binary(self.file_path)
+        """Try to load heap from file; prints a warning if file not found"""
+        try:
+            self.heap = Serialization.deserialize_from_binary(self.file_path)
+        except (FileNotFoundError, FileExistsError):
+            print("[Heap] Warning: attempted to deserialize from file that did"
+                  " not exist.")
+
+    def __repr__(self):
+        return repr(list(self.heap))
+
+    def __iter__(self):
+        # if self.heap is None:
+        #     return 'None'
+        for item in self.heap:
+            yield item
 
 
 if __name__ == '__main__':
@@ -34,6 +61,8 @@ if __name__ == '__main__':
         h.push(2)
         h.push(3)
         h.push(0)
+        print(h)
+        print(list(h))
         print(h.pop())
 
         h.serialize()

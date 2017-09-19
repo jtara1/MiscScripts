@@ -43,12 +43,12 @@ class GetMediaFiles:
         print('[GetMedia] Getting files with %s in %s' % (track_types, path))
 
         # get all files (and directories) in path
-        all_files = glob.glob(os.path.join(path, '**'), recursive=recursive)
-        limit_i = len(all_files) if limit_i == -1 else limit_i
-        all_files = all_files[start_i:limit_i]
+        files = glob.glob(os.path.join(path, '**'), recursive=recursive)
+        limit_i = len(files) if limit_i == -1 else limit_i
+        files = files[start_i:limit_i]
 
         # reorganize so we can append data with each file
-        all_files = list([f] for f in all_files)
+        files = list([f] for f in files)
 
         # e.g.: '(Audio|Video|Image)'
         media_types = '|'.join(track_types)
@@ -56,10 +56,7 @@ class GetMediaFiles:
 
         # Note: every file seems to have at least one track ('General')
         remove_indices = []
-        for f in all_files:
-            # print('f: ' + str(f))
-            # print('----')
-
+        for f in files:
             # get Media Info of current file
             info = MediaInfo.parse(f[0])
 
@@ -77,30 +74,23 @@ class GetMediaFiles:
             if (len(f) == 1 or f[1] == {}) or \
                     (remove_audio and 'Audio' in f[1].keys() and len(f) == 2):
 
-                remove_indices.append(all_files.index(f))
+                remove_indices.append(files.index(f))
                 continue
-
-            # this isn't really necessary to do this
-            # get easy to read and access media
-            # type at index 2 of each file in files (list)
-            # temp_list = list(k for k, v in f[1].items())
-            # media_type = '-'.join(temp_list)
-            # f.append(media_type)
 
         # remove unwanted files in files list
         for count, index in enumerate(remove_indices):
-            all_files.remove(all_files[index - count])
+            files.remove(files[index - count])
 
         # return if we don't care about sorting by creation date or
         # attaching creation date data
         if not sort:
-            return all_files
+            return files
 
         # attach stats (mutates files) then sort files
-        self.attach_stats(all_files, stat_type=sort)
-        all_files = sorted(all_files, key=itemgetter(-1), reverse=sort_reverse)
+        self.attach_stats(files, stat_type=sort)
+        files = sorted(files, key=itemgetter(-1), reverse=sort_reverse)
 
-        return all_files
+        return files
 
     def get_all_old(self, path=None, file_types=None, sort='st_ctime',
                     start_i=None, limit_i=None):

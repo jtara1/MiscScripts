@@ -5,9 +5,10 @@ import dill
 
 class Serialization:
     @staticmethod
-    def make_paths_for_file(file_path):
+    def make_paths_for_file(file_path, is_file=True):
         """Make folders if needed for data file"""
-        path = os.path.dirname(file_path)
+        path = os.path.dirname(file_path) \
+            if is_file else os.path.abspath(file_path)
         if not os.path.exists(path):
             os.makedirs(path)
 
@@ -59,17 +60,26 @@ class GeneralSchema:
 
 
 class RenderDatum(GeneralSchema):
-    def __init__(self, data_file, main_key, date_created, media, song,
-                 media_indices, song_index, finished_render, uploaded_to):
+    def __init__(self, data_file, main_key, date_created, images, videos,
+                 images_range, videos_range, audio,
+                 audio_index, finished_render, uploaded_to):
         """All the data needed to be saved for a MediaToVideo render. 
         Not very elegant - just passing parameters as arguments 
         for the super constructor.
         """
         GeneralSchema.__init__(
             self, data_file=data_file, main_key=main_key,
-            date_created=date_created, media=media, song=song,
-            media_indices=media_indices, song_index=song_index,
-            finished_render=finished_render, uploaded_to=uploaded_to)
+            date_created=date_created, images=images, videos=videos,
+            images_range=images_range, videos_range=videos_range, audio=audio,
+            audio_index=audio_index, finished_render=finished_render,
+            uploaded_to=uploaded_to)
+
+    def get_next(self):
+        """Returns next audio, image, and video index to begin at
+        :rtype: tuple of 3 integers"""
+        return (self.data[self.main_key]['audio_index'] + 1,
+                self.data[self.main_key]['images_range'][1] + 1,
+                self.data[self.main_key]['videos_range'][1] + 1)
 
     def __lt__(self, other):
         """Invert `<` operator so heapq from std lib becomes max_heap
@@ -77,6 +87,13 @@ class RenderDatum(GeneralSchema):
         """
         return self.data[self.main_key]['date_created'] >= \
             other.data[self.main_key]['date_created']
+
+    def __repr__(self):
+        return repr(self.__dict__)
+
+    def __iter__(self):
+        for k, v in self.data.items():
+            yield k, v
 
 
 if __name__ == '__main__':
@@ -88,10 +105,12 @@ if __name__ == '__main__':
             data_file=path,
             main_key='video.mp4',
             date_created=time.time(),
-            media=['somevid.mp4', 'pic.png', 'pic2.jpg'],
-            song='great_song.opus',
-            media_indices=[0, 2],
-            song_index=0,
+            images=['pic.png', 'pic2.jpg'],
+            videos=['vid.mp4'],
+            images_range=[0, 1],
+            videos_range=[0, 0],
+            audio='great_audio.opus',
+            audio_index=0,
             finished_render=True,
             uploaded_to=['yt/my_channel', 'vimeo/ch2']
         )
