@@ -77,16 +77,16 @@ class RenderDatum(GeneralSchema):
     def get_next(self):
         """Returns next audio, image, and video index to begin at
         :rtype: tuple of 3 integers"""
-        return (self.data[self.main_key]['audio_index'] + 1,
-                self.data[self.main_key]['images_range'][1] + 1,
-                self.data[self.main_key]['videos_range'][1] + 1)
+        return (self.data[self.main_key]['audio_index'],
+                self.data[self.main_key]['images_range'],
+                self.data[self.main_key]['videos_range'])
 
     def __lt__(self, other):
         """Invert `<` operator so heapq from std lib becomes max_heap
         when used with objs of this class
         """
         return self.data[self.main_key]['date_created'] >= \
-            other.data[self.main_key]['date_created']
+            other.data[other.main_key]['date_created']
 
     def __repr__(self):
         return repr(self.__dict__)

@@ -1,8 +1,8 @@
+import fire
 import os
 import sys
 import time
 from moviepy.editor import *
-import click
 from pprint import pprint
 
 # lazy way to import submodule whose path is in ../GetMediaFiles relative to
@@ -18,7 +18,7 @@ from MediaToVideo.heap import Heap
 
 class MediaToVideo:
     def __init__(
-            self, src_path=os.path.basename(os.path.abspath(__file__)),
+            self, src_path=os.path.dirname(os.path.abspath(__file__)),
             sort='st_ctime', sort_reverse=False, interval_duration=8,
             audio_index=0, audio_folder=None,
             renders_heap_file_path=os.path.join(os.path.dirname(__file__),
@@ -98,19 +98,32 @@ class MediaToVideo:
         self.image_files_range = [0, 0]
         self.video_files_range = [0, 0]
 
-    def render(self, resume=True, store_info=True):
+    def render(self, continuous=False, resume=True, store_info=True):
         """ The user using the API should call this method to render the images
         and videos from the provided path as a video based on the length of
         the audio file used in self._get_audio_file().
+        :param continuous: continuously render a video with the media available
         :param resume: load data to resume 
         :param store_info: Stores information of the render after it's done
         """
+        if continuous:
+            while True:
+                try:
+                    self._render(resume, store_info)
+                except (KeyboardInterrupt, IndexError) as e:
+                    print("{}: {}".format(type(e).__name__, e.args))
+                    break
+        else:
+            self._render(resume, store_info)
+
+    def _render(self, resume, store_info):
+        """Render a single video"""
         datum = self.renders_heap.peek()
 
         if resume and datum is not None:
             self.audio_index, \
-                self.image_files_range[0], \
-                self.video_files_range[0] = datum.get_next()
+                self.image_files_range, \
+                self.video_files_range = datum.get_next()
 
         # find the audio clip we're using to determine how long this rendered
         # video will be
@@ -121,7 +134,7 @@ class MediaToVideo:
         render_file_path = \
             self._composite_clips(self._get_clips(), audio_clip=audio_clip)
 
-        if store_info:
+        if store_info and resume:
             data_file = os.path.join(os.path.dirname(render_file_path),
                                      'datum.json')
             datum = RenderDatum(
@@ -141,18 +154,17 @@ class MediaToVideo:
 
     def _get_clips(self):
         """ Get list of Clip objects of videos & images """
-        return self._get_image_clips(self.image_files_range[0]) + \
-            self._get_video_clips(self.video_files_range[0])
+        return self._get_image_clips(self.image_files_range[1]) + \
+            self._get_video_clips(self.video_files_range[1])
 
     def _get_image_clips(self, image_index=0):
         """ Creates moviepy clips for images & returns a list of them """
         transition_t = 0.3
         clips = []
-
-        i = None
+        last_index = image_index
         for i, clip_data in enumerate(self.image_files[image_index:],
                                       start=image_index):
-
+            last_index = i
             if self.vid_time < self.max_duration:
                 clips.append(
                     ImageClip(clip_data[0], duration=self.interval_duration)
@@ -165,21 +177,24 @@ class MediaToVideo:
                     )
                 self.vid_time += self.interval_duration
             else:
+                # keep the index pointing to the index of the last media
+                # file used
+                # if i + 1 == len(self.video_files):
+                #     i -= 1
                 break
 
-        if i is not None:
-            self.image_files_range[1] = i
+        self.image_files_range = [image_index, last_index]
         return clips
 
     def _get_video_clips(self, video_index=0):
         """ Creates moviepy clips for video & returns a list of them """
         transition_t = 0.3
         clips = []
-
-        i = None
+        # i = 0
+        last_index = video_index
         for i, clip_data in enumerate(self.video_files[video_index:],
                                       start=video_index):
-
+            last_index = i
             if self.vid_time < self.max_duration:
                 src_clip_duration = float(
                     clip_data[1]['Video']['duration']) / 1000
@@ -197,26 +212,32 @@ class MediaToVideo:
                     )
                 self.vid_time += src_clip_duration
             else:
+                # keep the index pointing to the index of the last media
+                # file used
+                # if i + 1 == len(self.video_files):
+                #     i -= 1
                 break
 
-        if i is not None:
-            self.video_files_range[1] = i
+        self.video_files_range = [video_index, last_index]
         return clips
 
     def _get_audio_clip(self):
         """ Make audio clip from one of the files found in the main directory
         given
         """
-        return AudioFileClip(self.sound_files[self.audio_index][0])\
-            .set_start(0)\
-            .volumex(1)
+        try:
+            return AudioFileClip(self.sound_files[self.audio_index][0])\
+                .set_start(0)\
+                .volumex(1)
+        except IndexError:
+            raise IndexError("No more audio files available")
 
     def _composite_clips(self, clips, ofname='output', audio_clip=None):
         """ Renders and saves video made of clips from self._get_clips(...) 
         :returns opath: output_path of video file rendered 
         """
         if len(clips) == 0:
-            raise Exception("No more media")
+            raise IndexError("No more images or videos available")
 
         video = CompositeVideoClip(clips, size=(self.owidth, self.oheight))
 
@@ -278,27 +299,4 @@ class MediaToVideo:
 
 
 if __name__ == '__main__':
-    @click.command()
-    @click.argument('folder')
-    @click.option('-ai', '--audio-index', default=0, nargs=1,
-                  help='Index of the audio file to be used in the video')
-    @click.option('-af', '--audio-folder', default=None, nargs=1,
-                  help='The folder containing audio files which can be used'
-                       'in the video')
-    @click.option('-i', '--interval', default=8, nargs=1,
-                  help='Length in sec of each image shown in the video')
-    @click.option('-s', '--sort', default='st_ctime', nargs=1,
-                  help='Media files in src_folder get sorted according to this'
-                       'value. See '
-                       'https://docs.python.org/3/library/os.html'
-                       '#os.stat_result')
-    @click.option('-sr', '--sort-reverse', default=False, is_flag=True,
-                  help='Reverse after sorting; Default sorts from least to '
-                       'greatest (oldest to newest)')
-    def main(folder, audio_index, interval, sort, sort_reverse, audio_folder):
-        m2v = MediaToVideo(folder, sort=sort, sort_reverse=sort_reverse,
-                           interval_duration=interval, audio_index=audio_index,
-                           audio_folder=audio_folder)
-        m2v.render()
-
-    main()
+    fire.Fire(MediaToVideo)
