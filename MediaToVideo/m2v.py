@@ -98,29 +98,29 @@ class MediaToVideo:
         self.image_files_range = [0, 0]
         self.video_files_range = [0, 0]
 
-    def render(self, continuous=False, resume=True, store_info=True):
+    def render(self, continuous=False):
         """ The user using the API should call this method to render the images
         and videos from the provided path as a video based on the length of
         the audio file used in self._get_audio_file().
         :param continuous: continuously render a video with the media available
-        :param resume: load data to resume 
-        :param store_info: Stores information of the render after it's done
         """
         if continuous:
             while True:
                 try:
-                    self._render(resume, store_info)
-                except (KeyboardInterrupt, IndexError) as e:
+                    self._render()
+                except (KeyboardInterrupt, IndexError, Exception) as e:
                     print("{}: {}".format(type(e).__name__, e.args))
                     break
         else:
-            self._render(resume, store_info)
+            self._render()
 
-    def _render(self, resume, store_info):
+    def _render(self):
         """Render a single video"""
         datum = self.renders_heap.peek()
 
-        if resume and datum is not None:
+        if datum is not None:
+            if self._out_of_media(datum):
+                raise Exception("No more media available")
             self.audio_index, \
                 self.image_files_range, \
                 self.video_files_range = datum.get_next()
@@ -134,23 +134,24 @@ class MediaToVideo:
         render_file_path = \
             self._composite_clips(self._get_clips(), audio_clip=audio_clip)
 
-        if store_info and resume:
-            data_file = os.path.join(os.path.dirname(render_file_path),
-                                     'datum.json')
-            datum = RenderDatum(
-                    data_file=data_file, main_key=render_file_path,
-                    date_created=os.stat(render_file_path).st_ctime,
-                    images=self._image_files_used(),
-                    videos=self._video_files_used(),
-                    audio=self.sound_files[self.audio_index],
-                    audio_index=self.audio_index,
-                    images_range=self.image_files_range,
-                    videos_range=self.video_files_range,
-                    finished_render=True, uploaded_to=[]
-                    )
-            pprint(dict(datum), width=100)  # debug
-            self.renders_heap.push(datum)
-            self.renders_heap.serialize()
+        # create datum object that holds info on completed render
+        data_file = os.path.join(os.path.dirname(render_file_path),
+                                 'datum.json')
+        datum = RenderDatum(
+                data_file=data_file, main_key=render_file_path,
+                date_created=os.stat(render_file_path).st_ctime,
+                images=self._image_files_used(),
+                videos=self._video_files_used(),
+                audio=self.sound_files[self.audio_index],
+                audio_index=self.audio_index + 1,
+                images_range=self.image_files_range,
+                videos_range=self.video_files_range,
+                finished_render=True, uploaded_to=[]
+                )
+        pprint(dict(datum), width=100)  # debug
+        self.renders_heap.push(datum)  # store datum in heap
+        self.renders_heap.serialize()  # save heap to file
+        self.vid_time = 0  # reset in case we're doing another render
 
     def _get_clips(self):
         """ Get list of Clip objects of videos & images """
@@ -296,6 +297,22 @@ class MediaToVideo:
         """Should only be called after self._get_video_files() is called"""
         return self.video_files[
             self.video_files_range[0]:self.video_files_range[1]]
+
+    def _out_of_media(self, datum):
+        """
+        Checks if there's at least one
+        media to play for the duration of the audio
+        :param datum: The datum that's about to be used to help choose the
+            next media for the video render
+        :type datum: serialization.RenderDatum
+        :return: True if there's not enough media, false otherwise
+        """
+        imgs_range = datum.data[datum.main_key]['images_range']
+        vids_range = datum.data[datum.main_key]['videos_range']
+        if imgs_range[1] - imgs_range[0] == 0 and \
+                vids_range[1] - vids_range[0] == 0:
+            return True
+        return False
 
 
 if __name__ == '__main__':
