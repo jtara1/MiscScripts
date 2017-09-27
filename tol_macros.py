@@ -13,14 +13,14 @@ class Action(threading.Thread):
         self.hotkey = hotkey
         self.enabled = False
         self.terminate = False
-        self.delay_between_picksups = 0.5
+        self.action_delay = 0.5  # delay after action has been done
 
         self.thread = threading.Thread(target=self._run_repeatedly)
         self.start()
         self._stop_event = threading.Event()
         
         self.create_hotkey()
-		
+
     def create_hotkey(self):
         keyboard.add_hotkey(
             hotkey=self.hotkey,
@@ -40,7 +40,7 @@ class Action(threading.Thread):
             while self.enabled:
                 # need to implement this in child class
                 self.do_action()  
-                time.sleep(self.delay_between_picksups)
+                time.sleep(self.action_delay)
             time.sleep(1)
 
     def do_action(self):
@@ -48,7 +48,7 @@ class Action(threading.Thread):
     
     def toggle_enabled(self):
         self.enabled = not self.enabled
-        print(__class__.__name__ + str(self.enabled))
+        print("{} {}".format(self.__class__.__name__, str(self.enabled)))
 
     def stop(self):
         """Stop the thread. We're no longer doing any action
@@ -63,7 +63,7 @@ class Pickup(Action):
         Presses f repeatedly which picks up loot
         in a certain online game
         """
-        super().__init__(hotkey=hotkey)
+        super(Pickup, self).__init__(hotkey=hotkey)
         
     def do_action(self):
         keyboard.press_and_release('f')
@@ -74,7 +74,7 @@ class Digger(Action):
         """
         Digs dirt in a certain online game
         """
-        super().__init__(hotkey=hotkey)
+        super(Digger, self).__init__(hotkey=hotkey)
 
     def do_action(self):
         mouse.press(button='right')
@@ -89,7 +89,7 @@ class Walker(Action):
         """
         Walks forward until disabled
         """
-        super().__init__(hotkey=hotkey)
+        super(Walker, self).__init__(hotkey=hotkey)
 
     def do_action(self):
         if self.enabled:

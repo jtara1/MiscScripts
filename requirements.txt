@@ -5,8 +5,10 @@ PIL         # resize_images.py
 bs4         # resize_images.py (for XML annotation parser)
 Pillow      # screenshot_book_pages.py
 pyautogui   # screenshot_book_pages.py
-wx          # screenshot_book_pages.py
+wxPython    # screenshot_book_pages.py
 fpdf        # screenshot_book_pages.py
 pymediainfo # GetMediaFiles and DeleteImgurDNE
 psutil      # gooey or wxPython
 moviepy     # MediaToVideo/m2v.py
+fire        # MediaToVideo/m2v.py
+dill        # MediaToVideo/serialization.py
