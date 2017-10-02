@@ -10,6 +10,7 @@ class Symbol:
         self.symbol = symbol
 
     def __cmp__(self, other):
+        """Used by sorted() and .sort() methods (?)"""
         if len(self.symbol) == len(other.symbol):
             return self - other
         return len(self.symbol) - len(other.symbol)
@@ -25,8 +26,20 @@ class Symbol:
     def __lt__(self, other):
         return self.__cmp__(other) < 0
 
+    def __repr__(self):
+        return str(self)
+        # return '{}({})'.format('Symbol', str(self))
+
     def __str__(self):
         return self.symbol
+
+    def __hash__(self):
+        """Used to compare identity in a set"""
+        return hash(self.symbol)
+
+    def __eq__(self, other):
+        """Used to compare identity in a set"""
+        return isinstance(other, Symbol) and self.symbol == other.symbol
 
     def concatenate(self, other):
         """Returns the new Symbol concatenated with this Symbol and the other
@@ -52,11 +65,10 @@ def get_products(max_length=2, output_file=None, *symbols):
 
     alphabet = set(Symbol(symbol) for symbol in symbols)
     # using list over set to preserve order
-    products = sorted(list(alphabet))
+    products = alphabet
 
     # open output file and write initial alphabet set to it if it's available
     out_file = open(os.path.abspath(output_file), 'w') if output_file else None
-    list(write_if_avail(symbol) for symbol in products)
 
     for length in range(2, max_length):
         # iterable of tuples of length length of the products of all the
@@ -70,15 +82,15 @@ def get_products(max_length=2, output_file=None, *symbols):
                 lambda x, y: x.concatenate(y),
                 product)
 
-            write_if_avail(product)
-            products.append(product)
-        # products.extend(list(''.join(product) for product in p))
+            products.add(product)
+
+    if out_file:
+        products = sorted(products)
+    list(write_if_avail(prod) for prod in products)
 
     if out_file:
         out_file.close()
 
-    products = sorted(products)
-    # print(products)
     return products
 
 
@@ -87,5 +99,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # get_permutations(3, 'output.txt', 'a', 'b')
     main()
