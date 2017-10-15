@@ -16,6 +16,12 @@ from imgur in a given directory.
 in the given folder. Useful for when there's lots of media files made on linux
 w/o file name extension which need file name extension in windows.
 
+`alphabet_positive_closure.py` given any set of symbols, generate the 
+alphabet positive closure (+) set of the alphabet of symbols. (Useful in 
+formal language and automata). 
+e.g.: `$ python alphabet_positive_closure.py --max-length 4 
+--output-file out.txt a b c`
+
 `anti_afk.py` prevents player from being marked as afk in a video game by
 moving the character forward and backward (`w` and `s` key presses) keys.
 
