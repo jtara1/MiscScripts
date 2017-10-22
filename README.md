@@ -9,8 +9,14 @@ from imgur in a given directory.
 `GetMediaFiles/get_media_files.py` returns information about media files
 (images, audio, video) in a given directory (like a wrapper for pymediainfo).
 
+`HTML/blk-bg.html` is a simple HTML file with a black background that I use
+on my 2nd monitor so I don't have this glaring bright white thing to my side.
+
 `MediaToVideo/m2v.py` takes all images from a folder and renders them into
  a video.
+ 
+ `Startup/win_start_bash.bat` is a script that I have a windows task start after
+ login to start powershell and cd into my projects directory.
 
 `add_file_extensions.py` concatenates the user-given extension to each file
 in the given folder. Useful for when there's lots of media files made on linux

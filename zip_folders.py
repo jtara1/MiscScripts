@@ -19,11 +19,13 @@ def zip_folders(folder, v):
             print("ZIPPING FOLDER: {}".format(current_folder))
         # open a zip file (to write to)
         with zipfile.ZipFile(current_folder + ".zip", 'w') as z_file:
+            # cd so we don't need to zip folders that contain the files
+            os.chdir(current_folder)
             # write each file or folder in the current_folder
             for file in os.listdir(current_folder):
                 if v:
                     print('zipping: {}'.format(file))
-                z_file.write(os.path.join(current_folder, file))
+                z_file.write(file)
 
 
 if __name__ == "__main__":
