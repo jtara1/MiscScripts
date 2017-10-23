@@ -12,3 +12,4 @@ psutil      # gooey or wxPython
 moviepy     # MediaToVideo/m2v.py
 fire        # MediaToVideo/m2v.py
 dill        # MediaToVideo/serialization.py
+requests    # download_music.py
