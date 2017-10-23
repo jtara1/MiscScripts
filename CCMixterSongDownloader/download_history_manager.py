@@ -7,9 +7,11 @@ class History:
     log_file = '._history.json'
 
     @staticmethod
-    def _history_log(wdir=os.getcwd(), log_file='log_file.txt',
-                     mode='read', write_data=None):
-        """Read python dictionary from or write python dictionary to a file
+    def history_log(wdir=os.getcwd(), log_file='log_file.txt',
+                    mode='read', write_data=None):
+        """This should generally be called after another program has finished
+        to record it's progress or history.
+        Read python dictionary from or write python dictionary to a file
 
         :param wdir: directory for text file to be saved to
         :param log_file: name of text file (include .txt extension)
@@ -55,7 +57,7 @@ class History:
         no_history = False
         try:
             # first: we try to open the log_file
-            log_data = History._history_log(dir, History.log_file, 'read')
+            log_data = History.history_log(dir, History.log_file, 'read')
 
             # second: we check if the data loaded is a dictionary
             if not isinstance(log_data, dict):
@@ -85,7 +87,7 @@ class History:
                     }
                 }
             }
-            History._history_log(dir, History.log_file, 'write', log_data)
+            History.history_log(dir, History.log_file, 'write', log_data)
             if verbose:
                 print('%s not found in %s, created new %s'
                       % (History.log_file, dir, History.log_file))
@@ -99,7 +101,7 @@ class History:
 
         if no_history:
             last_id = 0
-            log_data = History._history_log(dir, History.log_file, 'write',
-                                            log_data)
+            log_data = History.history_log(dir, History.log_file, 'write',
+                                           log_data)
 
         return log_data, last_id
