@@ -1,20 +1,10 @@
 # MiscScripts
-Various scripts I've found to be useful. I'm consolidating some of my other
-github repos here and adding general scripting util I've created.
+Various scripts I've found to be useful.
 
-
-`DeleteImgurDNE/delete_imgur_dne.py` deletes all 'does not exist' images 
-from imgur in a given directory.
-
-`GetMediaFiles/get_media_files.py` returns information about media files
-(images, audio, video) in a given directory (like a wrapper for pymediainfo).
 
 `HTML/blk-bg.html` is a simple HTML file with a black background that I use
 on my 2nd monitor so I don't have this glaring bright white thing to my side.
 
-`MediaToVideo/m2v.py` takes all images from a folder and renders them into
- a video.
- 
  `Startup/win_start_bash.bat` is a script that I have a windows task start after
  login to start powershell and cd into my projects directory.
 
@@ -22,10 +12,10 @@ on my 2nd monitor so I don't have this glaring bright white thing to my side.
 in the given folder. Useful for when there's lots of media files made on linux
 w/o file name extension which need file name extension in windows.
 
-`alphabet_positive_closure.py` given any set of symbols, generate the 
-alphabet positive closure (+) set of the alphabet of symbols. (Useful in 
-formal language and automata). 
-e.g.: `$ python alphabet_positive_closure.py --max-length 4 
+`alphabet_positive_closure.py` given any set of symbols, generate the
+alphabet positive closure (+) set of the alphabet of symbols. (Useful in
+formal language and automata).
+e.g.: `$ python alphabet_positive_closure.py --max-length 4
 --output-file out.txt a b c`
 
 `anti_afk.py` prevents player from being marked as afk in a video game by
@@ -73,9 +63,9 @@ Tested with *Python 3.5+*
 
 #### Dependencies
 
-- `DeleteImgurDNE/` and `GetMediaFiles/` require 
+- `DeleteImgurDNE/` and `GetMediaFiles/` require
 [MediaInfo installer](https://mediaarea.net/en/MediaInfo/Download)
-- other scripts may use **tkinter**, **wx**, or **Qt** GUI modules which 
+- other scripts may use **tkinter**, **wx**, or **Qt** GUI modules which
 may require external downloads of their own
 
 #### Modules
@@ -92,7 +82,7 @@ pip install -r requirements.txt
 ### Usage
 
 Depends on which script you're using. Most of the scripts are using
-click module for cli so you could just run it with `--help` and check the 
+click module for cli so you could just run it with `--help` and check the
 help and cli info in console
 
 e.g.:

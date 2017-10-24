@@ -7,9 +7,4 @@ Pillow      # screenshot_book_pages.py
 pyautogui   # screenshot_book_pages.py
 wxPython    # screenshot_book_pages.py
 fpdf        # screenshot_book_pages.py
-pymediainfo # GetMediaFiles and DeleteImgurDNE
 psutil      # gooey or wxPython
-moviepy     # MediaToVideo/m2v.py
-fire        # MediaToVideo/m2v.py
-dill        # MediaToVideo/serialization.py
-requests    # download_music.py

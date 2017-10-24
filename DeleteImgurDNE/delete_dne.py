@@ -1,6 +1,6 @@
 import os
 import sys
-
+raise Exception("need to have a way to link jtara1's GetMediaFiles")
 # lazy way to import submodule whose path is in ../GetMediaFiles relative to
 # the file path of this file (__file__)
 sys.path.append(os.path.join(os.path.dirname(__file__), '../GetMediaFiles'))
