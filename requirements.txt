@@ -8,3 +8,4 @@ pyautogui   # screenshot_book_pages.py
 wxPython    # screenshot_book_pages.py
 fpdf        # screenshot_book_pages.py
 psutil      # gooey or wxPython
+requests    # create_python_gitignore
