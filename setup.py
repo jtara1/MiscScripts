@@ -7,7 +7,9 @@ def get_install_requirements():
     requirements = []
     with open('requirements.txt', 'r') as f:
         for line in f:
-            requirements.append(re.sub("\s", "", line))
+            # rm comments and whitespace chars
+            line = re.sub("(\s|#.*)", "", line)
+            requirements.append()
     print(requirements)
     return requirements
 
