@@ -10,8 +10,12 @@ __file_path = dirname(__file__)
 module_name = basename(dirname(__file_path))
 github_user = 'jtara1'
 github_url = 'https://github.com/{}/{}'.format(github_user, module_name)
-with open(join(__file_path, 'README.rst')) as f:
-    readme = f.read()
+try:
+    with open(join(__file_path, 'README.rst')) as f:
+        readme = f.read()
+except (FileNotFoundError, FileExistsError):
+    readme = ''
+description = 'description_needed'
 
 
 def get_install_requirements():
@@ -28,9 +32,8 @@ def get_install_requirements():
 setup(name=module_name,
       packages=[module_name],
       version=version,
-      description='Wrapper for pymediainfo that retrieves information such as'
-                  'media type, duration, resolution, etc. from media files',
-      long_description=readme,
+      description=description,
+      long_description=readme if readme is not '' else description,
       author='James T',
       author_email='jtara@tuta.io',
       url=github_url,
