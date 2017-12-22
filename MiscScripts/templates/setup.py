@@ -1,4 +1,4 @@
-from distutils.core import setup
+from setuptools import setup
 import re
 from os.path import join, dirname, basename
 
@@ -49,7 +49,7 @@ setup(name=module_name,
       author=author,
       author_email=author_email,
       url=github_url,
-      download_url=,
+      download_url=download_url,
       keywords=[],
       install_requires=get_install_requirements(),
       # list of strs https://pypi.python.org/pypi?%3Aaction=list_classifiers
