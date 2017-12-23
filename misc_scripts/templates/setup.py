@@ -1,12 +1,13 @@
+import shutil
 from setuptools import setup, find_packages
 import re
 from os.path import join, dirname, basename, abspath
 
 
 __doc__ = """This template setup.py file was intended to be generic enough
-for use in any of my python modules. It will create setup.cfg and update 
-the metadata that is required there. It'll automatically determine the name
-of the module by using the parent folder name of this setup.py file.
+for use in any of my python modules on github. It will create setup.cfg and  
+update the metadata that is required there. It'll automatically determine the 
+name of the module by using the parent folder name of this setup.py file.
 It pulls the text inside the README.md or README.rst to use in the 
 long_descriptiion of the setup function
 Fill out the information below with your own for your module.
@@ -47,6 +48,16 @@ download_url = '{github_url}/archive/{version}.tar.gz'\
     .format(github_url=github_url, version=version)
 
 
+def create_setup_cfg(callback=None):
+    """Creates the setup.cfg file with basic metadata and calls the callback"""
+    with open(join(__path, 'setup.cfg'), 'w') as config:
+        config.write(
+            "[metadata]\nname = {module_name}\ndescription-file = {readme}"
+            .format(module_name=module_name, readme=readme))
+    if callback is not None:
+        callback()
+
+
 def change_rst_to_md_extension_in_cfg():
     """Replaces README.rst with README.md in setup.cfg"""
     try:
@@ -56,7 +67,8 @@ def change_rst_to_md_extension_in_cfg():
             config.seek(0)
             config.write(text)
     except (FileNotFoundError, FileExistsError):
-        print('[setup.py] Warning: No setup.cfg found')
+        create_setup_cfg(change_rst_to_md_extension_in_cfg)
+        # print('[setup.py] Warning: No setup.cfg found')
 
 
 # Store text from README.rst or README.md to use in long description and
@@ -97,7 +109,8 @@ def update_cfg_module_name():
             config.seek(0)
             config.write(text)
     except (FileNotFoundError, FileExistsError):
-        print('[setup.py] Warning: No setup.cfg found')
+        create_setup_cfg(update_cfg_module_name)
+        # print('[setup.py] Warning: No setup.cfg found')
 
 
 update_cfg_module_name()
