@@ -61,11 +61,11 @@ def get_install_requirements():
 
 
 def update_cfg_module_name():
-    """Replaces README.rst with README.md in setup.cfg"""
+    """Replaces the module name in setup.cfg with module_name"""
     try:
         with open(join(__path, 'setup.cfg'), 'r+') as config:
             text = config.read()
-            text = re.sub('name = module_name_setup_cfg',
+            text = re.sub('name = module_name(_setup_cfg)?',
                           'name = {}'.format(module_name),
                           text)
             config.seek(0)
