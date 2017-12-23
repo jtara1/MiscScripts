@@ -58,6 +58,21 @@ def get_install_requirements():
     return requirements
 
 
+def update_cfg_module_name():
+    """Replaces README.rst with README.md in setup.cfg"""
+    try:
+        with open(join(__path, 'setup.cfg'), 'r+') as config:
+            text = config.read()
+            text = re.sub('name = module_name_setup_cfg',
+                          'name = {}'.format(module_name),
+                          text)
+            config.write(text)
+    except (FileNotFoundError, FileExistsError):
+        print('[setup.py] Warning: No setup.cfg found')
+
+
+update_cfg_module_name()
+
 setup(name=module_name,
       packages=find_packages(),  # find all dependencies for this module
       version=version,
