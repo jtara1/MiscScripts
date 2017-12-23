@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 import re
-from os.path import join, dirname, basename
+from os.path import join, dirname, basename, abspath
 
 
 # -------------- Update the following variables --------------- #
@@ -11,7 +11,8 @@ author_email = 'jtara@tuta.io'
 description = 'description_needed_from_dev'
 # ------------------------------------------------------------- #
 
-__path = dirname(__file__)  # path to this file but not including this file
+# path to this file but not including this file
+__path = dirname(abspath(__file__))
 # get module name from parent folder name
 # assumes the parent folder (repository name) is the same as the module name
 module_name = basename(__path)
@@ -26,6 +27,7 @@ def change_rst_to_md_extension_in_cfg():
         with open(join(__path, 'setup.cfg'), 'r+') as config:
             text = config.read()
             text = re.sub('README.rst', 'README.md', text)
+            config.seek(0)
             config.write(text)
     except (FileNotFoundError, FileExistsError):
         print('[setup.py] Warning: No setup.cfg found')
@@ -66,6 +68,7 @@ def update_cfg_module_name():
             text = re.sub('name = module_name_setup_cfg',
                           'name = {}'.format(module_name),
                           text)
+            config.seek(0)
             config.write(text)
     except (FileNotFoundError, FileExistsError):
         print('[setup.py] Warning: No setup.cfg found')
