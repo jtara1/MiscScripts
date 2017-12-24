@@ -115,9 +115,9 @@ if __name__ == "__main__":
         # test_path = 'test-case'
         # delete_dne(test_path, recursive=True)
 
-        print('[DeleteImgurDNE] %i seconds passed' %
+        print('[delete_imgur_dne] %i seconds passed' %
               (time.time() - init_t))
-        print('[DeleteImgurDNE] %i DNE images found & deleted' %
+        print('[delete_imgur_dne] %i DNE images found & deleted' %
               amount_deleted)
 
     main()
