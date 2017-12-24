@@ -52,7 +52,8 @@ public class TimeUpdater
         TimeUpdater t = new TimeUpdater();
         string time = t.updateToInternetTime();
         Console.Out.WriteLine("OS time updated to: " + time);
-        Console.In.ReadLine();
+		System.Threading.Thread.Sleep(2500);
+        // Console.In.ReadLine();
     }
 
     public TimeUpdater()
