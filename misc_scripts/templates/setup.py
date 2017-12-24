@@ -1,4 +1,3 @@
-import shutil
 from setuptools import setup, find_packages
 import re
 from os.path import join, dirname, basename, abspath
@@ -75,10 +74,12 @@ def change_rst_to_md_extension_in_cfg():
 # update setup.cfg to point to the correct readme if needed
 try:
     with open(join(__path, 'README.rst')) as f:
+        readme_file_name = 'README.rst'
         readme = f.read()
 except (FileNotFoundError, FileExistsError):
     try:
         with open(join(__path, 'README.md')) as f:
+            readme_file_name = 'README.md'
             readme = f.read()
             change_rst_to_md_extension_in_cfg()
     except (FileExistsError, FileNotFoundError):
