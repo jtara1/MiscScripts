@@ -159,6 +159,7 @@ KEY_A   equ 0x41
 KEY_S   equ 0x53
 KEY_D   equ 0x44
 KEY_F   equ 0x46
+KEY_E   equ 0x45
 
 ;;items
 ITEM_BIOMASS equ 0x1
@@ -196,12 +197,22 @@ get_key_in_and_move:
 	; pickup biomass
 	CMP B, KEY_F
 	JZ withdraw_biomass
+	; drill slowly
+	CMP B, KEY_E
+	JZ drill_slow
 	
 	JNZ invalid
 	POP B
 	POP A
 	RET
 
+drill_slow:
+	PUSH A
+	MOV A, DRILL_GATHER_SLOW
+	HWI HWID_DRILL
+	POP A
+	RET
+	
 withdraw_biomass:
 	PUSH A
 	PUSH B
