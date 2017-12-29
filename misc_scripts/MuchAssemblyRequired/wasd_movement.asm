@@ -154,7 +154,10 @@ FLOPPY_WRITE_SECTOR equ 3 ; Cost: 1kJ
 ;;  *Seek time is added to the total execution time, which is not yet calculated as of v1.3a
 
 ;; jtara1's contributions
+KEY_W   equ 0x57
 KEY_A   equ 0x41
+KEY_S   equ 0x53
+KEY_D   equ 0x44
 
 
 ; wasd_movement.asm by jtara1
@@ -173,11 +176,19 @@ get_key_in_and_move:
 	PUSH A
 	PUSH B
 	MOV A, KEYBOARD_FETCH_KEY
+	HWI HWID_KEYBOARD
+	; move west
 	CMP B, KEY_A
-	CALL print_B_hex
-	;PUSH ZF
-	;CALL print_pop_stack
-	JZ rotate_west
+	JZ move_west
+	; move north
+	CMP B, KEY_W
+	JZ move_north
+	; move east
+	CMP B, KEY_D
+	JZ move_east
+	; move south
+	CMP B, KEY_S
+	JZ move_south
 	JNZ invalid
 	POP B
 	POP A
@@ -190,13 +201,30 @@ invalid:
     POP B
     RET
 
-rotate_west:
-	
+move_west:
 	MOV A, LEGS_SET_DIRECTION_AND_WALK
 	MOV B, LEGS_DIR_WEST
 	HWI HWID_LEGS
 	RET
-
+	
+move_north:
+	MOV A, LEGS_SET_DIRECTION_AND_WALK
+	MOV B, LEGS_DIR_NORTH
+	HWI HWID_LEGS
+	RET
+	
+move_east:
+	MOV A, LEGS_SET_DIRECTION_AND_WALK
+	MOV B, LEGS_DIR_EAST
+	HWI HWID_LEGS
+	RET
+	
+move_south:
+	MOV A, LEGS_SET_DIRECTION_AND_WALK
+	MOV B, LEGS_DIR_SOUTH
+	HWI HWID_LEGS
+	RET
+	
 print_B_hex:
 	PUSH A
 	MOV A, HOLO_DISPLAY_HEX
