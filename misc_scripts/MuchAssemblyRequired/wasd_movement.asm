@@ -158,6 +158,10 @@ KEY_W   equ 0x57
 KEY_A   equ 0x41
 KEY_S   equ 0x53
 KEY_D   equ 0x44
+KEY_F   equ 0x46
+
+;;items
+ITEM_BIOMASS equ 0x1
 
 
 ; wasd_movement.asm by jtara1
@@ -189,11 +193,25 @@ get_key_in_and_move:
 	; move south
 	CMP B, KEY_S
 	JZ move_south
+	; pickup biomass
+	CMP B, KEY_F
+	JZ withdraw_biomass
+	
 	JNZ invalid
 	POP B
 	POP A
 	RET
 
+withdraw_biomass:
+	PUSH A
+	PUSH B
+	MOV A, LASER_WITHDRAW
+	MOV B, ITEM_BIOMASS
+	HWI HWID_LASER
+	POP B
+	POP A
+	RET
+	
 invalid:
     PUSH B
     MOV B, 0xB
