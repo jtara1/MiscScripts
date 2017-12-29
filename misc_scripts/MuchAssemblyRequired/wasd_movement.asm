@@ -153,11 +153,16 @@ FLOPPY_WRITE_SECTOR equ 3 ; Cost: 1kJ
 ;;  Read and write operations are synchronous. Track seeking time is 2ms.*
 ;;  *Seek time is added to the total execution time, which is not yet calculated as of v1.3a
 
-;; jtara1's contributions
+;; keys
 KEY_W   equ 0x57
 KEY_A   equ 0x41
 KEY_S   equ 0x53
 KEY_D   equ 0x44
+
+KEY_F   equ 0x46
+
+;; items
+ITEM_BIOMASS equ 0x1
 
 
 ; wasd_movement.asm by jtara1
@@ -189,16 +194,35 @@ get_key_in_and_move:
 	; move south
 	CMP B, KEY_S
 	JZ move_south
-	JNZ invalid
+	; deposit biomass
+	CMP B, KEY_F
+	JZ deposit_biomass
+	JNZ print_battery
 	POP B
 	POP A
 	RET
 
+deposit_biomass:
+	PUSH B
+	MOV A, LASER_DEPOSIT
+	MOV B, ITEM_BIOMASS
+	HWI HWID_LASER
+	POP B
+	RET
+	
 invalid:
     PUSH B
     MOV B, 0xB
     CALL print_B_hex
     POP B
+    RET
+	
+print_battery:
+    PUSH A
+    MOV A, 1
+    HWI HWID_BATTERY
+    HWI HWID_HOLO
+    POP A
     RET
 
 move_west:
