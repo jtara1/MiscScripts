@@ -1,0 +1,275 @@
+
+### Manhattan Distance
+This simple program calculates the [Manhattan distance](https://en.wikipedia.org/wiki/Taxicab_geometry) between the current position of the Cubot and another tile. 
+```assembly
+; Define constants
+LIDAR_HW equ 0x0003    ; HWID of the LiDAR
+HOLO_HW equ 0x0009     ; HWID of the Hologram projector
+
+; Data segment
+.data
+    
+counter: DW 0x0000     ; Counter global variable
+; The DW (Define word) directive writes the specified value(s), seperated by a
+; comma at assembly time. You can define a label before the directive to refer
+; to it by name.
+
+; Code/executable segment
+.text
+    ; Program entry point
+    call getPos         ; Execute procedure
+    
+    PUSH 7              ; y2
+    PUSH 11             ; x2
+    call manhattanDist  ; Execute procedure
+    
+    TEST [counter], 1   ; Display 'ABCD' every other tick
+    JNZ counter_is_odd
+    MOV A, 0xABCD       
+counter_is_odd:
+
+    ADD [counter], 1    ; Increment counter
+    MOV B, A
+    MOV A, 1
+    HWI HOLO_HW         ; Display the contents of A
+    BRK                 ; Exit program
+    
+;**************************************
+;* getPos()
+;* X = X pos
+;* Y = Y pos
+getPos:
+    PUSH A              ; Save A
+    MOV A, 0x0001       ; GET_POS
+    HWI LIDAR_HW        ; Send hardware interrupt to the LiDAR
+    POP A               ; Restore A
+    RET
+    
+
+;**************************************
+;* manhattanDist(x2,y2)
+;* A = Distance between (X,Y) and (x2,y2)      
+manhattanDist:
+    PUSH BP             ; Save previous stack frame
+    MOV BP, SP
+    
+    ; The old value of BP is at [BP + 0] 
+    ; The return address is at [BP + 1]
+    ; The x2 argument is at [BP + 2]
+    ; The y2 argument is at [BP + 3]
+
+    ; formula: |x1-x2| + |y1-y2|
+    SUB X, [BP + 2]     ; X = (X - x2)
+    
+    ; A fancy way to get the absolute value of X
+    MOV A, X            ; Copy X
+    SAR A, 15           ; Fill A with sign
+    XOR X, A            ; Do 'NOT X' if negative
+    SUB X, A            ; Do 'ADD X, 1' if negative
+    
+    SUB Y, [BP + 3]     ; Y = (Y - y2)
+    ; A simpler way to get the absolute value of Y
+    JNS y_is_positive
+    NEG Y               ; If Y was negative, it is NEG'd
+y_is_positive:
+
+    MOV A, X            ; A = |x1-x2|    
+    ADD A, Y            ; A = |x1-x2| + |y1-y2|
+    
+    POP BP              ; Restore the previous stack frame
+    RET 2               ; Return and POP our 2 arguments
+
+```
+<details>
+<summary>Constants by hackersoup with help from [contributors](https://github.com/simon987/Much-Assembly-Required/wiki/Assembly-program-examples/_history)
+<br>
+Insert this code before the new code you write for MuchAssemblyRequired, and use a text editor like VSCode, Notepad++, Sublime, etc. for auto-complete.
+</summary>
+```assembly
+;; Hardware IDs
+HWID_LEGS     equ 0x1
+HWID_LASER    equ 0x2
+HWID_LIDAR    equ 0x3
+HWID_KEYBOARD equ 0x4
+HWID_DRILL    equ 0x5
+HWID_INV      equ 0x6
+HWID_RNG      equ 0x7
+HWID_CLOCK    equ 0x8
+HWID_HOLO     equ 0x9
+HWID_BATTERY  equ 0xA
+HWID_FLOPPY   equ 0xB
+
+;;  Drill
+;;  Version 1.0B
+DRILL_POLL        equ 1 ; Cost: 0kJ
+  ;; Get the status of the drill
+DRILL_GATHER_SLOW equ 2 ; Cost: 1400kJ
+  ;; Gather the resource located under the Cubot (4 tick)*
+  ;; Not implemented yet, see:
+  ;; https://github.com/simon987/Much-Assembly-Required/issues/10
+DRILL_GATHER_FAST equ 3 ; Cost: 2000kJ
+  ;; Gather the resource located under the Cubot (1 tick)
+DRILL_STATUS_OK   equ 0
+DRILL_STATUS_FAIL equ 1
+
+;;  Additional info
+;;  The drill status is either STATUS_OK (0x0000) or STATUS_BUSY = (0x0001).
+;;  When trying to activate the mining drill while it is busy, it will fail silently
+
+
+;;  Inventory
+;;  Version 1.0B
+INV_POLL  equ 1 ; Cost: 0kJ
+  ;; Get the contents of the inventory (B = Item ID, 0x0000 if empty)
+INV_CLEAR equ 2 ; Cost: 100kJ
+  ;; Safely destroy the contents of the inventory
+INV_EMPTY equ 0
+
+;;  Laser
+;;  Version 1.0B
+LASER_WITHDRAW equ 1 ; Cost: 30kJ
+  ;; Withdraw the desired item
+LASER_DEPOSIT  equ 2 ; Cost: 30kJ
+  ;; Withdraw the desired item
+
+;; items that can be used with the Laser
+ITEM_BIOMASS   equ 0x1
+
+;; Additional Info
+;; Specify the desired item by setting the value of the B register with an item ID.
+
+
+;;  Legs
+;;  Version 1.0B
+LEGS_SET_DIRECTION          equ 1 ; Cost: 20kJ
+  ;; Set the direction
+LEGS_SET_DIRECTION_AND_WALK equ 2 ; Cost: 100kJ
+  ;; Set the direction and walk forward
+
+LEGS_DIR_NORTH equ 0
+LEGS_DIR_EAST  equ 1
+LEGS_DIR_SOUTH equ 2
+LEGS_DIR_WEST  equ 3
+
+;;  Additional Info
+;;  Specify the direction in the B register
+
+
+;;  LiDAR
+;;  Version 1.0B
+LIDAR_GET_POS       equ 1 ; Cost: 0kJ
+  ;; Copy the current (x,y) coordinates in the World in the X and Y registers
+LIDAR_GET_PATH      equ 2 ; Cost: 50kJ
+  ;; Calculate the shortest path to the specified coordinates and copy it to memory
+LIDAR_GET_MAP       equ 3 ; Cost: 10kJ
+  ;; Generate the current World's map and copy it to memory
+LIDAR_GET_WORLD_POS equ 4 ; Cost: 0kJ
+  ;; Copy the current (x,y) coordinates in the Universe in the X and Y registers
+
+;; Additional Info
+;; Theres a lot, see it at:
+;; https://github.com/simon987/Much-Assembly-Required/wiki/Hardware:-LiDAR
+
+
+;;  Keyboard
+;;  Version NA
+KEYBOARD_CLEAR     equ 0 ; Cost: 0kJ
+  ;; Clear the keypress buffer
+KEYBOARD_FETCH_KEY equ 1 ; Cost: 0kJ
+  ;; Reads the oldest keycode from the buffer into the B register and remove it
+
+;; keys to use with Keyboard Hardware
+KEY_A   equ 0x41
+KEY_D   equ 0x44
+KEY_E   equ 0x45
+KEY_F   equ 0x46
+KEY_S   equ 0x53
+KEY_W   equ 0x57
+
+;;  Additional Info
+;;  The keycodes in game are in hexidecimal but in the url below they're in decimal
+;;  Keycodes: keycode.info
+
+
+;;  Hologram Projector
+;;  Version 1.1B
+HOLO_CLEAR          equ 0 ; Cost: 0kJ
+HOLO_DISPLAY_HEX    equ 1 ; Cost: 0kJ, Displays value of B register
+HOLO_DISPLAY_STRING equ 2 ; Cost: 0kJ, Displays 0-terminated unicode from X register
+
+;;  Additional Info
+;;  Setting Register A to anything other than 0 will cause that value to be displayed
+;;  Note that the Hologram Projector will clear itself at the end of the tick,
+;;  it is only necessary to use CLEAR when you want to cancel a DISPLAY command
+;;  executed within the same tick.
+
+
+;;  Battery
+;;  Version 1.0B
+BATTERY_POLL             equ 1 ; Cost: 0kJ
+  ;; Copy the current charge of the battery in kJ in the B register
+BATTERY_GET_MAX_CAPACITY equ 2 ; Cost: 0kJ
+  ;; Copy the maximum capacity of the battery in the B register
+
+;;  Additional Info
+;;  Maximum Capacity: 60,000 kJ
+;;  As of v1.2a, the only way to refill the battery is to use the temporary
+;;  REFILL = 0xFFFF value in the A register (See #2)
+
+
+;;  Random Number Generator
+;;  Version 1.0B
+RNG_POLL equ 0 ; Cost: 1kJ
+  ;; Copy a randomly generated word into the B register
+  ;; Set to 0 just as a placeholder, can be any number
+
+;;  Additional Info
+;;  Random number bounds: 0x0000 - 0xFFFF
+
+
+;;  Clock
+;;  Version 1.0B
+CLOCK_POLL equ 0 ; Cost: 0kJ
+  ;; Get the current time in ticks since the beginning of the universe as
+  ;; a 32-bit number stored in B:C (least significant bits in C)
+  ;; Set to 0 just as a placeholder, can be any number
+
+
+;;  Floppy Drive
+;;  Version 1.0B
+FLOPPY_POLL         equ 1 ; Cost: 0kJ
+  ;; Get the status of the drive (READY = 0, NO_MEDIA=1)
+FLOPPY_READ_SECTOR  equ 2 ; Cost: 1kJ
+  ;; Reads sector X to CPU ram starting at address Y
+FLOPPY_WRITE_SECTOR equ 3 ; Cost: 1kJ
+  ;; Writes sector X from CPU ram starting at Y
+
+;;  Additional Info
+;;  The players can upload their own binary data to a floppy disk or
+;;  download to a file using the floppy buttons in the editor.
+;;  Floppies contains 80 tracks with 18 sectors per track. That's
+;;  1440 sectors of 512 words. (total 1,474,560 bytes / 737,280 words / 1.44MB)
+;;  Read and write operations are synchronous. Track seeking time is 2ms.*
+;;  *Seek time is added to the total execution time, which is not yet calculated as of v1.3a
+```
+</details>
+
+Dump memory to disk
+```assembly
+HWID_FLOPPY   equ 0xB
+
+;**************************************
+;* dumpMemToDisk()
+;* Dump entire memory to Floppy Disk     
+dumpMemToDisk:
+	MOV X, 0
+	MOV Y, 0
+dumpMemToDiskLoop:
+	MOV A, 3 ; WRITE_SECTOR
+	HWI HWID_FLOPPY
+	ADD X, 1
+	ADD Y, 512
+	CMP X, 128
+	JNZ dumpMemToDiskLoop
+	RET
+``` 
