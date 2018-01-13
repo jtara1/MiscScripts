@@ -21,4 +21,4 @@
 ;	2. Resizing any of the Prep-center windows will cause a mismatch in the provided coordinates thus misclicking.
 ; Todo ... :
 ;	1. Get button via ID rather than coordinates
-; Author . : James Taracevicz, jtaracevicz@yahoo.com
+; Author . : James T (jtara1)

@@ -2,6 +2,9 @@ from functools import reduce
 from math import factorial
 import click
 
+__doc__ = """See https://jtara1.github.io/bernoulli.html
+for an updated Bernoulli Trials Calc"""
+
 
 @click.command()
 @click.argument('trials', type=click.INT)
