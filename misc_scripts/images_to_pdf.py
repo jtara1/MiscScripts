@@ -5,6 +5,10 @@ import PIL
 from PIL import Image
 import click
 
+__doc__"""
+saves each image in a directory on a page of a newly created PDF
+"""
+
 
 letter_width_inches = 8.5
 letter_height_inches = 11
@@ -47,44 +51,6 @@ def extract_digits(word):
         if char.isdigit():
             s += char
     return s
-
-
-# def get_letter_size_scaled(size):
-#     """Gets new size closest to param size while maintaining letter aspect ratio"""
-#     size_ratio = float(size[0]) / size[1]
-#     letter_ratio = letter_width_inches / letter_height_inches
-#     if size[0] >= size[1]:
-#             width = size[0]
-#             height = int(width * (1/letter_ratio))
-#     else:
-#             height = size[1]
-#             width = int(height * letter_ratio)
-#     return width, height
-
-
-# def scale_image_to_letter_size(img_path, dpi=300):
-#         def get_new_size(image):
-#             """Scales image size to letter size while maintaining img aspect ratio"""
-#             width, height = 0, 0
-#             image_aspect_ratio = image.size[0] / float(image.size[1])
-#             if image.size[0] >= image.size[1]:
-#                     width = int(letter_width_inches * dpi)
-#                     height = int(width * (1/image_aspect_ratio))
-#             else:
-#                     height = int(letter_height_inches * dpi)
-#                     width = int(height * image_aspect_ratio)
-#             return width, height
-#
-#         try:
-#             im = Image.open(img_path)
-#             new_size = get_new_size(im)
-#             #new_size = get_letter_size_scaled(im.size)
-#             if new_size != im.size:
-#                     im.thumbnail(new_size, Image.ANTIALIAS)
-#                     im.save(img_path, "PNG")
-#             return new_size
-#         except IOError:
-#             print("cannot create thumbnail for '%s'" % img_path)
 
 
 @click.command()

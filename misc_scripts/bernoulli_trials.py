@@ -9,7 +9,7 @@ for an updated Bernoulli Trials Calc"""
 @click.command()
 @click.argument('trials', type=click.INT)
 @click.argument('prob_of_success', type=click.FLOAT)
-def bernolli_trials(trials, prob_of_success):
+def bernoulli_trials(trials, prob_of_success):
     def binomial_distribution(n, k):
         return factorial(n) / (factorial(k) * factorial(n - k))
 
@@ -34,11 +34,9 @@ def bernolli_trials(trials, prob_of_success):
         output.append("successes >= {}, probability = {:.3}"
                       .format(i, reduce(lambda x, y: x + y, probabilities[i:])))
     print('\n'.join(output))
-    # return '\n'.join(output)
-    # return output
 
 
 if __name__ == '__main__':
-    output = bernolli_trials()
+    output = bernoulli_trials()
     print(output)
-    # bernolli_trials(10, 0.05)
+    # bernoulli_trials(10, 0.05)
