@@ -5,7 +5,7 @@ import PIL
 from PIL import Image
 import click
 
-__doc__"""
+__doc__ = """
 saves each image in a directory on a page of a newly created PDF
 """
 

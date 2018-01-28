@@ -1,11 +1,12 @@
-click       # almost everything
-keyboard    # tol_macros.py
-mouse       # tol_macros.py, record_and_play_mouse_macro.py
-image       # resize_images.py
-bs4         # resize_images.py (for XML annotation parser)
-Pillow      # screenshot_book_pages.py
-pyautogui   # screenshot_book_pages.py
-wxPython    # screenshot_book_pages.py
-fpdf        # screenshot_book_pages.py
-psutil      # gooey or wxPython
-requests    # create_python_gitignore
+click                # almost everything
+keyboard             # tol_macros.py
+mouse                # tol_macros.py, record_and_play_mouse_macro.py
+image                # resize_images.py
+bs4                  # resize_images.py (for XML annotation parser)
+Pillow               # screenshot_book_pages.py
+pyautogui            # screenshot_book_pages.py
+wxPython             # screenshot_book_pages.py
+fpdf                 # screenshot_book_pages.py
+psutil               # gooey or wxPython
+requests             # create_python_gitignore
+opencv-python        # image_template_matching.py
