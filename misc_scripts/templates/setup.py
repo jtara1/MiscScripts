@@ -48,7 +48,7 @@ def change_rst_to_md_extension_in_cfg():
     try:
         with open(join(directory, 'setup.cfg'), 'r+') as config:
             text = config.read()
-            text = re.sub('README.rst', 'README.md', text)
+            text = re.sub('README\.rst', 'README.md', text)
             config.seek(0)
             config.write(text)
     except (FileNotFoundError, FileExistsError):
