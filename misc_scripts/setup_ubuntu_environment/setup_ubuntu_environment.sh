@@ -65,3 +65,16 @@ fi
 
 # setup dev environment
 mkdir ~/_Github-Projects
+
+# setup email and name used for github
+echo "github setup:"
+echo "global email: "
+read email
+echo "global name: "
+read name
+
+if [[ "$email" != "" && "$name" != "" ]]
+then
+    git config --global user.email "$email"
+    git config --global user.name "$name"
+fi
