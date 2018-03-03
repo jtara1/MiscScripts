@@ -5,6 +5,11 @@
 # see README.md for more info
 #############################
 
+#### Personal Directories ####
+mkdir ~/temp
+mkdir ~/lib
+mkdir ~/software
+
 #### Install Software ####
 sudo apt update
 
@@ -22,7 +27,6 @@ sudo apt-get install grub-customizer -y
 # install chromium browser
 sudo apt install chromium-browser -y
 
-
 #### Change Configurations ####
 # GRUB CUSTOMIZER:
 # make windows loader default boot option
@@ -32,14 +36,18 @@ sudo apt install chromium-browser -y
 # use double click to open files
 # change mouse pointer acceleration to 0.1
 # enable num lock by default / on startup
+# add custom global hotkey to open dolphin with Meta+E
 
 # CONFIG
 # move misc_scripts/misc_scripts/setup_ubuntu_enviornment/config/* to ~/.config/
-echo "use jtara1's hotkeys for KDE kwin, tilde, and more? [y/n]"
+echo "use jtara1's hotkeys for KDE kwin, tilda, and more? [y/n]"
 read answer
 if [[ "$answer" = "" || "$answer" = "y" ]]
 then
-    echo
+    cd ~/temp
+    git clone https://github.com/jtara1/misc_scripts
+    cp misc_scripts/misc_scripts/setup_ubuntu_environment/config/* ~/.config -r
+    rm misc_scripts -rf
 fi
 
 # install, start, and enable on startup, ksuperkey to bind Alt+F1 to Metakey (windows start key)
@@ -57,8 +65,3 @@ fi
 
 # setup dev environment
 mkdir ~/_Github-Projects
-
-# other directories I use
-mkdir ~/temp
-mkdir ~/lib
-mkdir ~/software
