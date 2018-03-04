@@ -1,2 +1,4 @@
-konsole --workdir="/home/j/_Github-Projects/"
 tilda
+ksuperkey
+konsole --workdir="/home/j/_Github-Projects/"
+
