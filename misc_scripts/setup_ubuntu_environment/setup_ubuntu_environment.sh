@@ -38,6 +38,24 @@ sudo apt-get install grub-customizer -y
 # install chromium browser
 sudo apt install chromium-browser -y
 
+# python modules
+sudo pip3 install youtube-dl
+sudo pip3 install gallery-dl
+
+# install pycharm (python IDE)
+echo "install pycharm-professional (needs license), pycharm-community, none [p/c/n]"
+read answer
+if [ "$answer" = "p" ]
+then
+    sudo snap install pycharm-professional
+fi
+elif [ "$answer" = "c" ]
+then
+    sudo snap install pycharm-community
+fi
+
+# install webstorm (javascript IDE)
+
 #### Change Configurations ####
 # GRUB CUSTOMIZER:
 # make windows loader default boot option
@@ -98,3 +116,7 @@ then
     git config --global user.email "$email"
     git config --global user.name "$name"
 fi
+
+# update and upgrade packages
+sudo apt update
+sudo apt upgrade -y
