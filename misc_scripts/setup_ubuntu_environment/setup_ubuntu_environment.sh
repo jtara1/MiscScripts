@@ -26,6 +26,22 @@ MISC_SCRIPTS=$GITHUB/misc_scripts/misc_scripts
 # install tilda (pull down absolute floating terminal-like program for bash)
 sudo apt install tilda -y
 
+# install simple screen recorder
+#sudo add-apt-repository ppa:maarten-baert/simplescreenrecorder
+#sudo apt update
+#sudo apt install simplescreenrecorder
+sudo apt install vokoscreen
+
+# install open shot (video editor)
+#sudo add-apt-repository ppa:openshot.developers/ppa
+#sudo apt-get update
+#sudo apt-get install openshot-qt
+
+# install discord
+#https://discordapp.com/api/download?platform=linux&format=deb
+#sudo dpkg -i discord-0.0.4.deb
+#sudo apt install -f
+
 # install pip and virtualenv
 sudo apt install python-pip python3-pip -y
 sudo apt install python3-virtualenv -y
@@ -80,6 +96,9 @@ rm jtara1-bashrc-temp
 # CONFIG
 # move misc_scripts/misc_scripts/setup_ubuntu_enviornment/config/* to ~/.config/
 # add ~/_Github-Projects/ and ~/Downloads/ and ~/Pictures/ to places in Dolphin
+
+# copy blk-bg.html file to ~/Documents
+cp $MISC_SCRIPTS/HTML/blk-bg.html ~/Documents
 
 echo "use jtara1's hotkeys for KDE kwin, tilda, and more? [y/n]"
 read answer

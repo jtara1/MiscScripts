@@ -1,4 +1,4 @@
 tilda
 ksuperkey
-konsole --workdir="/home/j/_Github-Projects/"
-
+discord
+konsole --workdir="~/_Github-Projects/"
