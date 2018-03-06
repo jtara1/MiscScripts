@@ -94,7 +94,8 @@ fi
 rm jtara1-bashrc-temp
 
 # CONFIG
-# move misc_scripts/misc_scripts/setup_ubuntu_enviornment/config/* to ~/.config/
+cp $MISC_SCRIPTS/startup/linux-start.sh ~/.config/autostart-scripts
+chmod +x ~/.config/autostart-scripts/linux-start.sh
 # add ~/_Github-Projects/ and ~/Downloads/ and ~/Pictures/ to places in Dolphin
 
 # copy blk-bg.html file to ~/Documents
