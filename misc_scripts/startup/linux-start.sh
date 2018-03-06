@@ -1,4 +1,4 @@
-tilda
-ksuperkey
-discord
+tilda &
+ksuperkey &
+discord &
 konsole --workdir="~/_Github-Projects/"
