@@ -72,6 +72,12 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt install nodejs -y
 sudo apt install build-essential -y
 
+# install JetBrains Toolbox
+wget https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.7.3593.tar.gz
+dtrx jetbrains*
+sudo mv jetbrains*/jetbrains-toolbox /bin/
+rm jetbrains*
+
 # install pycharm (python IDE)
 echo "install pycharm-professional (needs license), pycharm-community, none [p/c/n]"
 read answer
@@ -150,6 +156,8 @@ then
     git config --global user.email "$email"
     git config --global user.name "$name"
 fi
+
+git config --global push.default simple
 
 # update and upgrade packages
 sudo apt update
