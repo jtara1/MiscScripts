@@ -14,7 +14,7 @@ mkdir ~/software
 GITHUB=~/_Github-Projects
 mkdir $GITHUB
 
-#### Install Software ####
+#### INSTALLING SOFTWARE & LIBRARIES ####
 sudo apt update
 
 # install git and download jtara1's collection of scripts and configurations
@@ -58,6 +58,17 @@ sudo apt install chromium-browser -y
 sudo pip3 install youtube-dl
 sudo pip3 install gallery-dl
 
+# install do the right extraction
+sudo apt install dtrx -y
+
+# install curl
+sudo apt install curl -y
+
+# install npm 8.10.0 (node.js package manager)
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt install nodejs -y
+sudo apt install build-essential -y
+
 # install pycharm (python IDE)
 echo "install pycharm-professional (needs license), pycharm-community, none [p/c/n]"
 read answer
@@ -72,7 +83,7 @@ fi
 
 # install webstorm (javascript IDE)
 
-#### Change Configurations ####
+#### CHANGE CONFIGURATIONS ####
 # GRUB CUSTOMIZER:
 # make windows loader default boot option
 # change resolution in appearance settings to 1024x768x8
@@ -85,7 +96,7 @@ fi
 # .bashrc
 (cat .bashrc && cat $MISC_SCRIPTS/.bashrc) > jtara1-bashrc-temp
 cat jtara1-bashrc-temp
-echo "Save the text above to ~/.bashrc [y/n]"
+echo "Concatenate ~/.bashrc with text above? [y/n]"
 read answer
 if [ "$answer" = "y" ]
 then
@@ -121,7 +132,7 @@ then
     sudo make install
     cd ..
     rm ksuperkey -r
-    ksuperkey
+    ksuperkey &
 fi
 
 # setup email and name used for github
