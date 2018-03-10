@@ -42,6 +42,9 @@ sudo apt install vokoscreen
 #sudo dpkg -i discord-0.0.4.deb
 #sudo apt install -f
 
+# install media info dll for usage with python module, get-media-info
+sudo apt install python3-mediainfodll # 6.6 MiB
+
 # install pip and virtualenv
 sudo apt install python-pip python3-pip -y
 sudo apt install python3-virtualenv -y
@@ -96,7 +99,7 @@ fi
 # .bashrc
 (cat .bashrc && cat $MISC_SCRIPTS/.bashrc) > jtara1-bashrc-temp
 cat jtara1-bashrc-temp
-echo "Concatenate ~/.bashrc with text above? [y/n]"
+echo "Copy text above to ~/.bashrc? [y/n]"
 read answer
 if [ "$answer" = "y" ]
 then

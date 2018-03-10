@@ -57,14 +57,14 @@ def change_rst_to_md_extension_in_cfg():
 
 def get_install_requirements():
     """Returns the parsed list of strings of required modules listed in
-    requirements.txt"""
+    requirements.txt.txt"""
     requirements = []
     try:
-        with open(join(directory, 'requirements.txt'), 'r') as req_file:
+        with open(join(directory, 'requirements.txt.txt'), 'r') as req_file:
             for line in req_file:
                 requirements.append(re.sub("\s", "", line))
     except (FileExistsError, FileNotFoundError):
-        print('[setup.py] Note: No requirements.txt found')
+        print('[setup.py] Note: No requirements.txt.txt found')
     return requirements
 
 

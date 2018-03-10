@@ -1,6 +1,9 @@
 # misc_scripts
 Various scripts I've found to be useful.
 
+`delete_imgur_dne/delete_dne.py` takes an argument from command line to use
+as folder to search for copies of the *imgur does not exist* image and deletes
+them.
 
 `DevOps/count_lines.py` counts the number of files given the extension of the files and
 the total number of lines between all the files. Useful for checking how many
@@ -28,6 +31,11 @@ particular software.
 `templates/setup.py` is my go to setup.py file I include in every python module I want
 to distribute through `pip install git+https://github.com/jtara/my_repo` or through
 `pip install my_repo`
+
+`WinCMDTools/` contains scripts for adding hotkeys to make cmd or powershell
+usage more similar to default hotkeys for konsole on linux. Also includes 
+scripts to switch to using python 2 or 3 since you'd need to change your
+environment variables then open new powershell everytime otherwise.
 
 `add_file_extensions.py` concatenates the user-given extension to each file
 in the given folder. Useful for when there's lots of media files made on linux

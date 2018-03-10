@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #### Environment Variables #####
 export GITHUB=~/_Github-Projects
 export SCRIPTS=$GITHUB/misc_scripts/misc_scripts
@@ -9,6 +10,7 @@ alias tagnext="$GITHUB/misc_scripts/misc_scripts/DevOps/create_and_push_next_tag
 #alias ytdl="youtube-dl"
 alias mkvenv="virtualenv --python=python3 venv"
 alias venv=". ./venv/bin/activate"
+alias pycharm="pycharm-professional | pycharm-community"
 
 #### Functions ####
 pypi () {
