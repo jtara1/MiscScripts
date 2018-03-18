@@ -72,6 +72,15 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt install nodejs -y
 sudo apt install build-essential -y
 
+# install visudal studio code
+#https://go.microsoft.com/fwlink/?LinkID=760868
+
+# install brackets
+#wget https://github.com/adobe/brackets/releases/download/release-1.12/Brackets.Release.1.12.64-bit.deb
+
+# install atom
+#https://atom.io/download/deb
+
 # install JetBrains Toolbox
 wget https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.7.3593.tar.gz
 dtrx jetbrains*
