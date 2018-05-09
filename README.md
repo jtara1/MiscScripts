@@ -1,6 +1,9 @@
 # misc_scripts
 Various scripts I've found to be useful.
 
+`delete_imgur_dne/delete_dne.py` takes an argument from command line to use
+as folder to search for copies of the *imgur does not exist* image and deletes
+them.
 
 `DevOps/count_lines.py` counts the number of files given the extension of the files and
 the total number of lines between all the files. Useful for checking how many
@@ -25,9 +28,32 @@ particular software.
 
 `startup/` directory containing some scripts I run after I log in to my computer
 
-`templates/setup.py` is my go to setup.py file I include in every python module I want
+`python_setup_py_template/setup.py` is my go to setup.py file I include in 
+every python module I want
 to distribute through `pip install git+https://github.com/jtara/my_repo` or through
-`pip install my_repo`
+`pip install my_repo`  
+It uses **setuptools_scm** which will use the version (tag) from git for the project 
+to define the version within the setup.py.
+In other words, you need to `git tag 0.1.0` (or whichever tag you want) and 
+`git push --tags` before trying to install the module or 
+upload it to be installed.
+My setup.py will also **infer the name of the module** to be the  
+same name as the parent directory (github project name)
+so the directory should look something like this
+
+my_module
+
+- images
+- my_module
+    - \_\_main\_\_.py
+- setup.py
+- setup.cfg
+- README.md
+
+`WinCMDTools/` contains scripts for adding hotkeys to make cmd or powershell
+usage more similar to default hotkeys for konsole on linux. Also includes 
+scripts to switch to using python 2 or 3 since you'd need to change your
+environment variables then open new powershell everytime otherwise.
 
 `add_file_extensions.py` concatenates the user-given extension to each file
 in the given folder. Useful for when there's lots of media files made on linux
@@ -38,6 +64,10 @@ alphabet positive closure (+) set of the alphabet of symbols. (Useful in
 formal language and automata).
 e.g.: `$ python alphabet_positive_closure.py --max-length 4
 --output-file out.txt a b c`
+
+`add_ssh_key_for_github.sh` creates a new SSH key and copies it to the clip
+board using xclip. Requires 1st command line argument to be email associated
+with SSH key.
 
 `anti_afk.py` prevents player from being marked as afk in a video game by
 moving the character forward and backward (`w` and `s` key presses) keys.

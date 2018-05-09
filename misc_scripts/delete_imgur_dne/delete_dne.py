@@ -1,18 +1,12 @@
 import os
-import sys
-raise Exception("need to have a way to link jtara1's GetMediaFiles")
-# lazy way to import submodule whose path is in ../GetMediaFiles relative to
-# the file path of this file (__file__)
-sys.path.append(os.path.join(os.path.dirname(__file__), '../GetMediaFiles'))
-from GetMediaFiles.get_media_files import GetMediaFiles
-
+from get_media_files import GetMediaFiles
 import time
 import hashlib
 import click
 
 
 def are_files_equal(file1, file2):
-    """ given two file objects, checks to see if their bytes are equal """
+    """given two file objects, checks to see if their bytes are equal"""
     if bytearray(file1.read()) == bytearray(file2.read()):
         return True
     else:
@@ -20,9 +14,12 @@ def are_files_equal(file1, file2):
 
 
 def is_imgur_dne_image(img_path):
-        """ takes full image path & checks if bytes are equal to that of imgur does not exist image """
-        prg_path = os.path.abspath(os.path.dirname(__file__))
-        dne_img = os.path.join(prg_path, 'imgur-dne.png') # edit location if needed
+        """takes full image path & checks if bytes are equal to that of imgur
+        does not exist image
+        """
+        module_path = os.path.abspath(os.path.dirname(__file__))
+        # edit location if needed
+        dne_img = os.path.join(module_path, 'imgur-dne.png')
         with open(dne_img, 'rb') as f:
             dne_data = bytearray(f.read())
         with open(img_path, 'rb') as f:
@@ -45,11 +42,11 @@ def delete_dne_hash_cmp(path, recursive=False, verbose=False):
     """Delete file if its hash matches that of the reference file"""
 
     media = GetMediaFiles()
-    files = media.get_all(path=path, recursive=recursive, track_types=['Image'],
-                            sort=False)
+    files = media.get_info(path=path, recursive=recursive,
+                           track_types=['Image'], sort=False)
 
     if verbose:
-        media.print_files(files) # debug
+        print(files)
     print('%s files found' % len(files)) # debug
     print('-------------------------') # debug
 
@@ -64,7 +61,6 @@ def delete_dne_hash_cmp(path, recursive=False, verbose=False):
     for index in range(len(hashes)):
         if hashes[index] == dne_hash:
             amount_deleted += 1
-            print('%s' % (os.path.split(f[0])[1]))
             os.remove(files[index][0])
 
     print("delete_dne_hash_cmp func took %d seconds\n" % (int(time.time() - init_t)))
@@ -77,13 +73,13 @@ def delete_dne(path, recursive=False, verbose=False):
     """
 
     media = GetMediaFiles()
-    files = media.get_all(path=path, recursive=recursive,
-                          track_types=['Image'], sort=False)
+    files = media.get_info(path=path, recursive=recursive,
+                           track_types=['Image'], sort=False)
 
     init_t = time.time()
 
     if verbose:
-        media.print_files(files)  # debug
+        print(files)
     print('%s files found' % len(files))  # debug
     print('-------------------------')  # debug
 
