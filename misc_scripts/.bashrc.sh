@@ -38,6 +38,23 @@ multiplyFile() {
 }
 alias multi=multiplyFile
 
-getDateDaysAgo() {
+timeIt() {
+	initTime=$(python3 -c "print(__import__('time').time())")
+	sh -c "${*:1}"
+	python3 -c "print(__import__('time').time() - $initTime)"
+}
 
+getDateDaysAgo() {
+PLATFORM=$(uname)
+DAYS=$1
+
+if [ $PLATFORM == 'Darwin' ]; then
+    TIME=$(date -v-"$DAYS"d +%Y-%m-%dT%H:%mZ)
+elif [ $PLATFORM == 'Linux' ]; then
+    TIME=$(date -d "$DAYS days ago" '+%Y-%m-%dT%H:%MZ')
+else
+    echo "Platform not supported"
+    exit 1
+fi
+echo $TIME
 }
