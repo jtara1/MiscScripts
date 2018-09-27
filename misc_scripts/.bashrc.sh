@@ -23,3 +23,21 @@ pypi () {
         $UPLOAD_PYPI
     fi
 }
+
+getTime() {
+    python3 -c "print(int(__import__('time').time()))"
+}
+
+multiplyFile() {
+    for (( i=1; i<=$2; i++))
+    do
+        filename="$i-$(getTime)-$1"
+        cp $1 $filename;
+        echo $filename
+    done
+}
+alias multi=multiplyFile
+
+getDateDaysAgo() {
+
+}
