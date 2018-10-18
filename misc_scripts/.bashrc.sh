@@ -47,14 +47,12 @@ timeIt() {
 getDateDaysAgo() {
 PLATFORM=$(uname)
 DAYS=$1
+TIME=""
 
-if [ $PLATFORM == 'Darwin' ]; then
-    TIME=$(date -v-"$DAYS"d +%Y-%m-%dT%H:%mZ)
-elif [ $PLATFORM == 'Linux' ]; then
-    TIME=$(date -d "$DAYS days ago" '+%Y-%m-%dT%H:%MZ')
-else
-    echo "Platform not supported"
-    exit 1
-fi
-echo $TIME
+    if [ $PLATFORM == 'Darwin' ]; then
+        TIME=$(date -v-"$DAYS"d +%Y-%m-%dT%H:%mZ)
+    elif [ $PLATFORM == 'Linux' ]; then
+        TIME=$(date -d "$DAYS days ago" '+%Y-%m-%dT%H:%MZ')
+    fi
+    echo $TIME
 }
