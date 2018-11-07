@@ -105,6 +105,9 @@ info on bounding boxes for the image additionally.
 `screenshot_book_pages.py` takes a screenshot then press right arrow key to
 go to next page. Variables are hard coded atm.
 
+`surround_with_quotes_and_append_commas.sh` surrounds each line in the given 
+file with quotes and appends a comma to it; takes 1 positional argument, input file
+
 `tol_macros.py` macros made for a particular game, some of which can be used in
 other games or have base class, Action, extended for use elsewhere. Includes:
 auto item pickup (presses f), auto dirt digger (clicks and moves mouse),
