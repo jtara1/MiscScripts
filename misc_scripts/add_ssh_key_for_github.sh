@@ -1,8 +1,13 @@
 # source: 
 # https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/
 
+comment=$1
+if [ "$comment" == "" ]; then
+    comment="github"
+fi
+
 # generate new SSH key
-ssh-keygen -t rsa -b 4096 -C $1
+ssh-keygen -t rsa -b 4096 -C $comment
 
 # add the SSH key to the ssh-agent
 eval "$(ssh-agent -s)"
