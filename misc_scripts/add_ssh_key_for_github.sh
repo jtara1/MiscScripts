@@ -12,7 +12,8 @@ copy_to_clipboard() {
     sudo apt install xclip
     xclip -sel clip < ~/.ssh/id_rsa.pub
 
-    echo "SSH Key is saved to clipboard. \nGo to Github > Settings > SSH and GPG keys > New SSH key"
+    echo "SSH Key is saved to clipboard. Go to Github > Settings > SSH and GPG keys > New SSH key"
+    echo 'https://github.com/settings/keys'
 }
 
 copy_to_clipboard
